@@ -230,25 +230,6 @@ footer a { color: inherit; }
 // offline play after the first visit (same worker as the game)
 try { if ("serviceWorker" in navigator && window.isSecureContext) navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(function () {}); } catch (e) {}
 </script>
-<script type="module">
-// landing_view (docs/analytics.md, added 17 Oct 2026 by JG): one signal per page load, common parameters only.
-// clientUser is a random code made new for every page load and never saved, so nothing links two visits
-// or this page to the game. Test mode everywhere except timesgalaxy.app without ?test=1, like the game.
-import TelemetryDeck from "./vendor/telemetrydeck/telemetrydeck.js";
-try {
-  // test mode like the game: other addresses, ?test=1, or a device the game marked as a test device
-  let testDevice = false; try { testDevice = !!(JSON.parse(localStorage.getItem("times-galaxy-proto-v2") || "{}") || {}).testDevice; } catch (e) {}
-  const urlTest = /[?&]test=1(&|$)/.test(location.search);
-  const test = location.hostname !== "timesgalaxy.app" || urlTest || testDevice;
-  if (urlTest) document.querySelectorAll('a[href="./play/"]').forEach((a) => a.setAttribute("href", "./play/?test=1")); // "Play free" keeps test mode
-  const ua = navigator.userAgent;
-  const platform = /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ipad" : /iPhone|iPod/.test(ua) ? "iphone" : /Android/.test(ua) ? "android" : "desktop";
-  const installed = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
-  const params = { premium: "false", beta: "true", deviceKind: platform, installed: installed ? "true" : "false" };
-  const td = new TelemetryDeck({ appID: "D6E0ACED-6790-45A9-9B08-2F987355A201", clientUser: crypto.randomUUID ? crypto.randomUUID() : String(Math.random()), testMode: test });
-  if (test) console.log("Analytics sent:", "landing_view", params);
-  td.signal("landing_view", params).catch(() => {});
-} catch (e) {}
-</script>
+<script type="module" src="landing-view.js" data-page="home"></script>
 </body>
 </html>
