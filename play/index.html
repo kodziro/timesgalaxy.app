@@ -1267,7 +1267,34 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
     else if (typed.length < 3) typed += k;
     var box = document.querySelector(".answer"); if (box) { box.textContent = typed || "?"; box.className = "answer" + (typed ? "" : " empty"); }
   }
+  // Enter always proceeds (JG, 17 October 2026): Enter presses the one primary button on the screen.
+  // Order = priority, the first one on screen wins. Answers (GO) stay with onKey below.
+  // Never by Enter: the grown-ups lock (hold only), the rating faces, "Yes, reset", the save-code buttons, the grown-ups area.
+  var PRIMARY = ["meetGo", "gotit", "resume", "startSetup", "takeoff", "toMap", "goChallenge", "startChallenge", "goLaunch", "goBonus", "toCert", "backMap"];
+  var NO_ENTER = /^(gpbtn|resetYes|loadAsk|loadYes)$/, shownPrimary = "", shownAt = 0;
+  function primaryButton() {
+    if (view === "grownups") return null;
+    for (var i = 0; i < PRIMARY.length; i++) { var b = document.getElementById(PRIMARY[i]); if (b && !b.disabled) return b; }
+    return null;
+  }
+  // a new primary button ignores Enter for half a second, so a fast double press cannot skip a screen (e.g. mission complete)
+  var origRender = render;
+  render = function () { origRender(); var p = primaryButton(), id = p ? p.id : ""; if (id !== shownPrimary) { shownPrimary = id; shownAt = Date.now(); } };
+  function enterPrimary(e) {
+    var t = e.target, b = t.closest ? t.closest("button") : null;
+    if (b && NO_ENTER.test(b.id)) { if (b.id !== "gpbtn") e.preventDefault(); return true; }
+    // a button reached with Tab keeps its own Enter (Space always works on buttons); a face never rates by Enter
+    var kb = false; try { kb = b && b.matches(":focus-visible"); } catch (err) {}
+    if (kb && !b.dataset.rate && !b.dataset.k) return true;
+    if (/SELECT|TEXTAREA/.test(t.tagName) || (t.tagName === "INPUT" && view !== "setup")) return false;
+    var p = primaryButton(); if (!p) return false;
+    e.preventDefault();
+    if (!e.repeat && Date.now() - shownAt >= 500) p.click();
+    return true;
+  }
   document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.altKey && !e.ctrlKey && !e.metaKey && enterPrimary(e)) return;
+    if (view !== "play" && view !== "flight") return;
     if (!T || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
     if (/^[0-9]$/.test(e.key)) { onKey(e.key); e.preventDefault(); } else if (e.key === "Backspace") { onKey("del"); e.preventDefault(); } else if (e.key === "Enter") { onKey("go"); e.preventDefault(); }
   });
