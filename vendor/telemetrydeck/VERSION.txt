@@ -9,5 +9,7 @@ added:   2026-10-17
 
 To update: download the new tarball from the npm registry, copy dist/telemetrydeck.js and LICENSE
 here, update this file, and check that the game still sends the whitelisted signals
-(docs/analytics.md, QA section). The game uses TelemetryDeck's internal _build() to keep the
-time of a signal that was queued offline; check it still exists in the new version.
+(docs/analytics.md, QA section). The game builds the signal body itself in the 2.0.4 format
+(tdBody in site/play/index.html, including telemetryClientVersion "JavaScriptSDK 2.0.4") and
+uses the SDK's _hashedClientUser(), sessionID, salt and target; check these still exist and
+update the version string.

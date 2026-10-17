@@ -1,7 +1,7 @@
 {
   "name": "Times Galaxy",
   "short_name": "Times Galaxy",
-  "description": "A daily 5-minute times tables game. Free beta.",
+  "description": "A daily 5-minute times tables game. Free to play.",
   "id": "./play/",
   "start_url": "./play/",
   "scope": "./",

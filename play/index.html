@@ -662,7 +662,8 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
 
   // Notes for grown-ups only (setup screen and grown-ups area), never on a child screen.
   function setupNote() { return '<p class="note" style="margin:0;font-size:15px">Free · No ads · No account</p>'; }
-  function earlyNote() { return '<p class="early">Early version — things may still change. Thank you for trying it.</p>'; }
+  function earlyNote() { return '<p class="early">Early version — things may still change. Thank you for trying it.</p>' +
+    (S.testDevice ? '<p class="note" style="margin:0">Test device: usage counts from here are marked as tests. Open play/?test=0 to end this.</p>' : ""); }
   // ---------- save code (the only backup until accounts exist) ----------
   // "TG1-" + base64url(gzip(JSON)) when CompressionStream exists, else "TG0-" + base64url(JSON).
   // The answer log is cut to the last 300 answers to keep the code short (the speed goal reads the last 20).
@@ -670,7 +671,7 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
   function unb64(t) { t = t.replace(/-/g, "+").replace(/_/g, "/"); while (t.length % 4) t += "="; var s = atob(t), b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return b; }
   function gzip(bytes, pack) { return new Response(new Blob([bytes]).stream().pipeThrough(pack ? new CompressionStream("gzip") : new DecompressionStream("gzip"))).arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
   function makeCode() {
-    var c = JSON.parse(JSON.stringify(S)); c.log = (c.log || []).slice(-300); c.tdq = [];
+    var c = JSON.parse(JSON.stringify(S)); c.log = (c.log || []).slice(-300); c.tdq = []; delete c.testDevice; // the test mark belongs to the device, not the child
     var bytes = new TextEncoder().encode(JSON.stringify(c));
     if (window.CompressionStream) return gzip(bytes, true).then(function (z) { return "TG1-" + b64(z); });
     return Promise.resolve("TG0-" + b64(bytes));
@@ -1247,9 +1248,9 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
         readCode(document.getElementById("loadCode").value).then(function (s) { gpLoad = s; render(); if (view === "setup") { var d = document.querySelector("details"); if (d) d.open = true; } },
           function () { lmsg.textContent = "This code does not work. Check that you copied all of it."; });
         break;
-      case "loadYes": S = upgrade(gpLoad); gpLoad = null; gpConfirm = false; save(); T = null; go(S.flightDone ? "map" : "intro"); break;
+      case "loadYes": var wasTest = S.testDevice; S = upgrade(gpLoad); if (wasTest) S.testDevice = true; else delete S.testDevice; gpLoad = null; gpConfirm = false; save(); T = null; go(S.flightDone ? "map" : "intro"); break;
       case "loadNo": gpLoad = null; render(); if (view === "setup") { var d2 = document.querySelector("details"); if (d2) d2.open = true; } break;
-      case "resetYes": var keep = { uid: S.uid, speed: S.speed, relaxed: S.relaxed, max: S.max, voice: S.voice, sound: S.sound, len: S.len }; S = freshState(); Object.assign(S, keep); save(); gpConfirm = false; T = null; go("setup"); break;
+      case "resetYes": var keep = { uid: S.uid, testDevice: S.testDevice, speed: S.speed, relaxed: S.relaxed, max: S.max, voice: S.voice, sound: S.sound, len: S.len }; S = freshState(); Object.assign(S, keep); save(); gpConfirm = false; T = null; go("setup"); break;
       case "copyLog":
         var text = csv(), box = document.getElementById("csvBox");
         var fallback = function () { box.hidden = false; box.value = text; box.focus(); box.select(); };
@@ -1287,8 +1288,11 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
   // Signals wait in the save (S.tdq) until they are sent, so play without internet still counts, with its own time.
   // Test mode everywhere except the real domain (and there too with ?test=1).
   var TD_APP = "D6E0ACED-6790-45A9-9B08-2F987355A201";
-  var TD_TEST = location.hostname !== "timesgalaxy.app" || TEST;
-  var td = null, tdBusy = false;
+  // Test mode: every address except timesgalaxy.app, ?test=1 in the address, or a device marked as a test device
+  // (S.testDevice, set by opening /play/?test=1 once, removed by /play/?test=0; JG 17 Oct 2026), so a test iPad
+  // stays in test mode when the game is opened from its Home Screen icon.
+  function tdTest() { return location.hostname !== "timesgalaxy.app" || TEST || !!(S && S.testDevice); }
+  var td = null, tdHash = "", tdHashFor = "", inflight = null, tdReached = true;
   function uid() {
     // no save() here: a new visitor's empty state must not be stored before setup (the next save keeps the id)
     if (!S.uid) { try { S.uid = crypto.randomUUID(); } catch (e) { S.uid = "u" + Date.now().toString(36) + Math.random().toString(36).slice(2); } }
@@ -1299,30 +1303,57 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
     if (!S) return;
     var p = {}, k; params = params || {};
     for (k in params) p[k] = String(params[k]);
-    p.premium = "false"; p.beta = "true"; p.platform = platform(); p.installed = isInstalled() ? "true" : "false";
+    // "deviceKind", not "platform": TelemetryDeck fills its own top-level "platform" column, so a payload key with that name arrives as null
+    p.premium = "false"; p.beta = "true"; p.deviceKind = platform(); p.installed = isInstalled() ? "true" : "false";
     uid(); S.tdq = S.tdq || [];
-    if (S.tdq.length < 100) S.tdq.push({ t: name, p: p, at: new Date().toISOString() });
+    if (S.tdq.length < 100) S.tdq.push({ t: name, p: p, at: new Date().toISOString(), test: tdTest() }); // test or live is decided now, not when sent
     save();
-    if (TD_TEST) console.log("Analytics sent:", name, p);
+    if (tdTest()) console.log("Analytics sent:", name, p);
     sendSignals();
   }
   function once(flag, name, params) { S.sent = S.sent || {}; if (S.sent[flag]) return; S.sent[flag] = 1; signal(name, params); }
+  // Sending. The body is built here in the SDK 2.0.4 format, so it can be built at once when the tab closes;
+  // the SDK gives the hashed clientUser (SHA-256), the session id and the address. keepalive lets a request
+  // finish after the page is gone. A signal leaves the queue when the server answered, or when it was handed
+  // to a keepalive request as the tab closed.
+  function withHash(cb) {
+    var u = uid(); if (tdHash && tdHashFor === u) return cb();
+    td._hashedClientUser(u, td.salt).then(function (h) { tdHash = h; tdHashFor = u; cb(); }, function () {});
+  }
+  function tdBody(b) {
+    var o = { clientUser: tdHash, sessionID: td.sessionID, appID: TD_APP, type: b.t, telemetryClientVersion: "JavaScriptSDK 2.0.4", receivedAt: b.at, payload: b.p };
+    if (b.test === undefined ? tdTest() : b.test) o.isTestMode = true; // older queued signals have no mark: decide now
+    return o;
+  }
+  function tdPost(items) { return fetch(td.target, { method: "POST", mode: "cors", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify(items.map(tdBody)) }); }
+  function tdDrop(items) { if (!S) return; S.tdq = (S.tdq || []).filter(function (x) { return items.indexOf(x) < 0; }); save(); }
   function sendSignals() {
-    if (!td || tdBusy || !S || !S.tdq || !S.tdq.length || navigator.onLine === false) return;
-    var q = S.tdq, batch = q.slice(0, 20); tdBusy = true; td.clientUser = uid();
-    Promise.all(batch.map(function (b) { return td._build(b.t, b.p, undefined, b.at); })) // _build keeps the queued time (SDK 2.0.4)
-      .then(function (bodies) { return td._post(bodies); })
-      .then(function (r) {
-        tdBusy = false;
-        if (r.ok || (r.status >= 400 && r.status < 500)) { q.splice(0, batch.length); save(); if (r.ok) sendSignals(); } // a 4xx would never succeed: drop it
-      }, function () { tdBusy = false; });
+    if (!td || inflight || !S || !S.tdq || !S.tdq.length || navigator.onLine === false) return;
+    withHash(function () {
+      if (inflight || !S.tdq.length) return;
+      var batch = inflight = S.tdq.slice(0, 20);
+      tdPost(batch).then(function (r) {
+        tdReached = true; if (inflight === batch) inflight = null;
+        if (r.ok || (r.status >= 400 && r.status < 500)) { tdDrop(batch); if (r.ok) sendSignals(); } // a 4xx would never succeed: drop it
+      }, function () { tdReached = false; if (inflight === batch) inflight = null; });
+    });
+  }
+  function sendOnHide() { // the tab is hidden or closing: send what waits, now
+    // only when TelemetryDeck answered the last request: if it is unreachable, the signals stay for the next visit
+    if (!td || !S || !S.tdq || !S.tdq.length || !tdHash || tdHashFor !== uid() || navigator.onLine === false || !tdReached) return;
+    var going = inflight || [], rest = S.tdq.filter(function (x) { return going.indexOf(x) < 0; }).slice(0, 40);
+    if (rest.length) tdPost(rest).catch(function () {});
+    inflight = null; tdDrop(going.concat(rest)); // both requests are keepalive: they finish without this page
   }
   try {
     import("../vendor/telemetrydeck/telemetrydeck.js").then(function (m) {
-      td = new m.default({ appID: TD_APP, clientUser: uid(), testMode: TD_TEST }); sendSignals();
+      td = new m.default({ appID: TD_APP, clientUser: uid(), testMode: false }); // test mode is set per signal (tdBody)
+      withHash(sendSignals);
     }, function () {});
   } catch (e) {}
   window.addEventListener("online", sendSignals);
+  window.addEventListener("pagehide", sendOnHide);
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") sendOnHide(); });
 
   // Signals at the end of an activity: the original functions run unchanged, the signal goes out after them.
   var MILESTONES = [1, 5, 10, 25, 50, 100];
@@ -1373,6 +1404,9 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
   // ---------- boot ----------
   S = load();
   if (!S) { S = freshState(); view = "setup"; } else { upgrade(S); view = S.flightDone ? "map" : "intro"; }
+  // sticky test device: ?test=1 marks it, ?test=0 clears it (a new visitor's mark is stored with the first save)
+  if (/[?&]test=1(&|$)/.test(location.search)) { S.testDevice = true; if (S.savedAt) save(); }
+  else if (/[?&]test=0(&|$)/.test(location.search) && S.testDevice) { delete S.testDevice; save(); }
   render();
   loadMirror(); askPersist();
   // offline play after the first visit; the worker sits at the site root (../sw.js), so it covers /play/ at any address
