@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Times Galaxy – times tables game</title>
-<meta name="description" content="Play Times Galaxy: a daily 5-minute times tables game for children aged 8–9. Free beta, no account, no ads.">
+<meta name="description" content="Play Times Galaxy: a daily 5-minute times tables game for children aged 8–9. Free to play, no account, no ads.">
 <meta name="theme-color" content="#0B1033">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
@@ -171,7 +171,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .gp .check input { width: 22px; height: 22px; }
 .gp .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 480px) { .gp .grid2 { grid-template-columns: minmax(0, 1fr); } }
-.gp .beta { background: #FFF3DC; border: 2px solid #FFB547; border-radius: 14px; padding: 10px 12px; font-size: 14px; font-weight: 800; color: #0B1033; margin: 0; }
+.gp .early { background: #FFF3DC; border: 2px solid #FFB547; border-radius: 14px; padding: 10px 12px; font-size: 14px; font-weight: 800; color: #0B1033; margin: 0; }
 .rate { align-items: center; text-align: center; gap: 10px; }
 .faces { display: flex; justify-content: center; gap: 14px; }
 .face { background: none; border: 0; padding: 4px; border-radius: 999px; min-width: 72px; min-height: 72px; }
@@ -305,7 +305,7 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
 
   // ---------- calendar day ----------
   // The engine counts in whole days (S.day): reviews, mastery days, streak, "challenge tomorrow", day budget.
-  // In the web beta S.day = calendar days since the first launch + 1 (local date), so a day off counts as a day.
+  // In the web version S.day = calendar days since the first launch + 1 (local date), so a day off counts as a day.
   // It only moves forward, and only between activities (see render), never in the middle of a mission.
   // dayOffset is 0 for real players; "Next day" (?test=1) adds 1 to it.
   function ymd(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
@@ -660,8 +660,9 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
     if (line && line !== lastSpoken) { lastSpoken = line; say(line); }
   }
 
-  // Beta note: grown-ups screens only (setup and the grown-ups area), never on a child screen.
-  function betaNote() { return '<p class="beta">Beta. Progress is saved in this browser only.</p>'; }
+  // Notes for grown-ups only (setup screen and grown-ups area), never on a child screen.
+  function setupNote() { return '<p class="note" style="margin:0;font-size:15px">Free · No ads · No account</p>'; }
+  function earlyNote() { return '<p class="early">Early version — things may still change. Thank you for trying it.</p>'; }
   // ---------- save code (the only backup until accounts exist) ----------
   // "TG1-" + base64url(gzip(JSON)) when CompressionStream exists, else "TG0-" + base64url(JSON).
   // The answer log is cut to the last 300 answers to keep the code short (the speed goal reads the last 20).
@@ -731,7 +732,7 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
   }
   function vSetup() {
     return '<div class="row between"><h1 class="h1">Times Galaxy</h1>' + zib(64, "happy") + '</div>' +
-      '<div class="gp">' + betaNote() + installHint() + '<p class="note" style="margin:0;font-size:15px">For the grown-up: set up, then hand the device to the child.</p>' + settingsForm(true) +
+      '<div class="gp">' + setupNote() + installHint() + '<p class="note" style="margin:0;font-size:15px">For the grown-up: set up, then hand the device to the child.</p>' + settingsForm(true) +
       '<button class="gbtn" id="startSetup" style="min-height:52px;font-size:18px">Start the first flight</button>' +
       '<details class="box"><summary style="font-weight:900;cursor:pointer">Have a save code from another device?</summary>' + loadBox() + '</details></div>';
   }
@@ -1147,7 +1148,7 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
     var logRows = S.log.slice(-200).reverse().map(function (e) { return "<tr><td>" + e.day + "</td><td>" + e.at + "</td><td>" + esc(e.mode) + "</td><td>" + e.q + "</td><td>" + esc(e.given) + "</td><td class=\"" + (e.ok ? "ok" : "bad") + "\">" + (e.ok ? "right" : "wrong (" + e.right + ")") + "</td><td>" + e.s + " s</td></tr>"; }).join("");
     var today = S.log.filter(function (e) { return e.day === S.day; }), rightN = today.filter(function (e) { return e.ok; }).length;
     var mins = (today.reduce(function (a, e) { return a + e.s; }, 0) / 60).toFixed(1);
-    return '<div class="gp"><div class="row between"><h2>Grown-ups</h2><button class="gbtn" id="gpClose">Back to the game</button></div>' + betaNote() + installHint() +
+    return '<div class="gp"><div class="row between"><h2>Grown-ups</h2><button class="gbtn" id="gpClose">Back to the game</button></div>' + earlyNote() + installHint() +
       '<p class="note" style="margin:0">Progress for ' + (S.name ? esc(S.name) : "the child") + '. Day ' + S.day + ' · today ' + today.length + ' answers, ' + rightN + ' right, about ' + mins + ' min answering · streak ' + streak() + ' · speed goal now ' + (S.relaxed ? "off" : goal() + " s") + ' · new facts per mission now ' + (S.newCap || NEW_MIN) + '.</p>' + tiles + parentRating() +
       '<div class="box"><h3>All facts</h3><div class="fgwrap"><table class="fg">' + head + rows + '</table></div>' +
       '<div class="legend"><span><i style="background:#E59A12"></i>Mastered (easy facts: 1 day, others: 3 days)</span><span><i style="background:#3DA9E0"></i>Learned</span><span><i style="background:#F2B8C0"></i>Tried, not learned</span><span><i style="background:#E2E6FA"></i>Not seen</span></div></div>' +

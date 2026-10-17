@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Times Galaxy – times tables game (multiplication practice), free beta</title>
+<title>Times Galaxy – free times tables game (multiplication practice)</title>
 <meta name="description" content="Master your times tables, 5 minutes a day. A free space game for children aged 8–9: one short multiplication mission a day, 12 planets, one for each times table. No account, no ads.">
 <link rel="canonical" href="https://timesgalaxy.app/">
 <meta property="og:type" content="website">
@@ -31,7 +31,7 @@
     { "@type": "Organization", "@id": "https://timesgalaxy.app/#org", "name": "Apps for Parents", "email": "appsforparents@gmail.com",
       "sameAs": ["https://first-then.app", "https://visual-schedule.app", "https://token-board.app", "https://kidstimer.app"] },
     { "@type": "WebApplication", "@id": "https://timesgalaxy.app/#app", "name": "Times Galaxy", "url": "https://timesgalaxy.app/play/",
-      "description": "A daily 5-minute times tables game for children aged 8–9. Free beta in the web browser.",
+      "description": "A daily 5-minute times tables game for children aged 8–9. Free to play in the web browser.",
       "applicationCategory": "EducationalApplication", "operatingSystem": "Any (web browser)", "browserRequirements": "Requires JavaScript and a modern web browser.",
       "inLanguage": "en", "isAccessibleForFree": true, "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children aged 8 to 9" },
@@ -39,7 +39,7 @@
       "featureList": ["One mission a day, about 20 questions", "12 planets, one for each times table up to 12 × 12", "New facts with a dot picture and a trick", "Mistakes come back later; old facts are reviewed on later days", "Planet challenge: the whole table, no timer", "Grown-ups area with every fact: learned, mastered, hard", "No account, no ads, works offline after the first visit"],
       "publisher": { "@id": "https://timesgalaxy.app/#org" } },
     { "@type": "FAQPage", "@id": "https://timesgalaxy.app/#faq", "mainEntity": [
-      { "@type": "Question", "name": "Is Times Galaxy free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The beta is free, with no ads and no account." } },
+      { "@type": "Question", "name": "Is Times Galaxy free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is free to play, with no ads and no account." } },
       { "@type": "Question", "name": "Which ages is it for?", "acceptedAnswer": { "@type": "Answer", "text": "Mainly children aged 8–9 (Grade 3 in the US, Year 4 in the UK). It also works for Grade 2 as a first start, and for Grades 4–5 to fill gaps and get faster." } },
       { "@type": "Question", "name": "How long does it take each day?", "acceptedAnswer": { "@type": "Answer", "text": "About 5 minutes. There is one mission a day, about 20 questions, and an 8-question bonus on short days. Then Zib goes to sleep until tomorrow." } },
       { "@type": "Question", "name": "Where is my child's progress saved?", "acceptedAnswer": { "@type": "Answer", "text": "Only in this browser, on this device. In the grown-ups area you can copy a save code as a backup and load it on another device. On iPhone and iPad, add the game to the Home Screen so Safari keeps the progress." } },
@@ -77,7 +77,9 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--cyan); outline
 header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-family: var(--display); font-size: 24px; letter-spacing: 0.5px; }
 .logo img { width: 40px; height: 40px; border-radius: 10px; }
-.beta { font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: var(--space); background: var(--amber); border-radius: 999px; padding: 3px 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chips span, .chips a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; background: var(--panel); border: 2px solid var(--line); color: var(--soft); font-weight: 800; font-size: 15px; text-decoration: none; }
+.chips a { color: var(--cyan); border-color: var(--cyan); }
 h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: 0.5px; line-height: 1.08; margin: 0; text-wrap: balance; }
 h1 { font-size: clamp(38px, 9vw, 64px); }
 h2 { font-size: clamp(28px, 6vw, 40px); margin-bottom: 14px; }
@@ -128,13 +130,13 @@ footer a { color: inherit; }
 <div class="wrap">
   <header>
     <a class="logo" href="./"><img src="icons/icon-192.png" alt="" width="40" height="40">Times Galaxy</a>
-    <span class="beta">Free beta</span>
   </header>
 
   <main>
     <div class="hero">
       <div>
         <h1>Master your times tables, 5 minutes a day</h1>
+        <div class="chips"><span>Free to play</span><span>No ads, no account</span><a href="./privacy/">Privacy first</a></div>
         <p class="lead">A free space game for children aged 8–9. Fly through 12 planets, one for each times table, until every multiplication fact is quick and sure.</p>
         <div class="cta">
           <a class="btn" href="./play/">Play free</a>
@@ -193,7 +195,7 @@ footer a { color: inherit; }
 
     <section aria-labelledby="faq">
       <h2 id="faq">Questions</h2>
-      <details><summary>Is Times Galaxy free?</summary><p>Yes. The beta is free, with no ads and no account.</p></details>
+      <details><summary>Is Times Galaxy free?</summary><p>Yes. It is free to play, with no ads and no account.</p></details>
       <details><summary>Which ages is it for?</summary><p>Mainly children aged 8–9 (Grade 3 in the US, Year 4 in the UK). It also works for Grade 2 as a first start, and for Grades 4–5 to fill gaps and get faster.</p></details>
       <details><summary>How long does it take each day?</summary><p>About 5 minutes. There is one mission a day, about 20 questions, and an 8-question bonus on short days. Then Zib goes to sleep until tomorrow.</p></details>
       <details><summary>Where is my child's progress saved?</summary><p>Only in this browser, on this device. In the grown-ups area you can copy a save code as a backup and load it on another device. On iPhone and iPad, add the game to the Home Screen so Safari keeps the progress.</p></details>
@@ -206,7 +208,7 @@ footer a { color: inherit; }
   </main>
 
   <footer>
-    <p>Times Galaxy · free beta · No account · No ads · Progress stays on your device</p>
+    <p>Times Galaxy · Free to play · No account · No ads · Progress stays on your device</p>
     <p><a href="./parents/">For parents</a> · <a href="./privacy/">Privacy</a> · <a href="mailto:appsforparents@gmail.com">appsforparents@gmail.com</a> · Apps for Parents</p>
   </footer>
 </div>

@@ -1,11 +1,11 @@
 # Times Galaxy (timesgalaxy.app)
 
-> Times Galaxy is a free daily times tables game (multiplication practice) for children aged 8–9 that runs in the web browser. The child is a pilot who flies through 12 planets, one for each times table, with Zib, a small alien co-pilot. One short mission a day (about 5 minutes) teaches new facts with a dot picture and a trick, brings mistakes back, and reviews old facts on later days until every fact up to 12 × 12 is quick and sure. Free beta, no account, no ads; progress stays on the device.
+> Times Galaxy is a free daily times tables game (multiplication practice) for children aged 8–9 that runs in the web browser. The child is a pilot who flies through 12 planets, one for each times table, with Zib, a small alien co-pilot. One short mission a day (about 5 minutes) teaches new facts with a dot picture and a trick, brings mistakes back, and reviews old facts on later days until every fact up to 12 × 12 is quick and sure. Free to play, no account, no ads; progress stays on the device.
 
 Made by: Apps for Parents. Contact: appsforparents@gmail.com
 Website: https://timesgalaxy.app/
 Type: web app (not an App Store app). Language: English.
-Price: free beta. No account, no ads.
+Price: free to play. No account, no ads.
 
 ## What it is
 
@@ -46,7 +46,7 @@ Price: free beta. No account, no ads.
 
 ## FAQ
 
-- Is it free? Yes. The beta is free, with no ads and no account.
+- Is it free? Yes. It is free to play, with no ads and no account.
 - Which ages? Mainly 8–9 (Grade 3 / Year 4); also Grade 2 and Grades 4–5.
 - How long each day? About 5 minutes: one mission of about 20 questions.
 - Where is progress saved? Only in that browser on that device. A save code in the grown-ups area is the backup and moves progress to another device.
