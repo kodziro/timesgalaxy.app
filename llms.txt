@@ -1,0 +1,60 @@
+# Times Galaxy (timesgalaxy.app)
+
+> Times Galaxy is a free daily times tables game (multiplication practice) for children aged 8–9 that runs in the web browser. The child is a pilot who flies through 12 planets, one for each times table, with Zib, a small alien co-pilot. One short mission a day (about 5 minutes) teaches new facts with a dot picture and a trick, brings mistakes back, and reviews old facts on later days until every fact up to 12 × 12 is quick and sure. Free beta, no account, no ads; progress stays on the device.
+
+Made by: Apps for Parents. Contact: appsforparents@gmail.com
+Website: https://timesgalaxy.app/
+Type: web app (not an App Store app). Language: English.
+Price: free beta. No account, no ads.
+
+## What it is
+
+- A daily 5-minute game to learn the times tables (multiplication facts) by heart, for Grade 3 / Year 4 (ages 8–9). Also for Grade 2 as a first start and Grades 4–5 to fill gaps and get faster.
+- 12 planets in this order, from easy to hard: ×1, ×2, ×10, ×5, ×3, ×4, ×6, ×9, ×8, ×7, ×11, ×12. A 10 × 10 setting removes ×11 and ×12.
+- 7 × 8 and 8 × 7 count as one fact: 78 facts up to 12 × 12 (55 up to 10 × 10).
+- It opens in the browser on iPad, iPhone, Chromebook, Android and computers. Nothing to download, no sign-up.
+
+## How it works
+
+1. First flight (about 2 minutes): Zib asks the two hardest facts of each times table. Tables the child already knows light up at once and give their rockets.
+2. One mission a day: about 20 questions. 3 new facts per mission to start (up to 5 when new facts go well), each with a "New fact" card: a dot picture that shows the trick (for example 6 × 9 as 5 rows of 9 plus 1 row) and the answer. Wrong answers come back about 4 questions later; the mission never gets longer than shown. Reviews of earlier facts come on later days (1, 3, 7, 14, then 30 days).
+3. Planet challenge: when every fact of a planet has been answered correctly once, the challenge comes the next day: the whole table once, no timer, second tries at the end.
+4. Galaxy explored: after all 12 planets, a certificate, then a short daily patrol keeps the facts fresh.
+
+## Key features
+
+- A day stays under about 28 answers: one mission, plus an 8-question bonus on short days. Then Zib goes to sleep.
+- Mastered means quick and correct on different days (3 days for hard facts, 1 day for ×1, ×2 and ×10 facts). The speed goal adapts to the child; a relaxed mode has no speed goal.
+- Rewards: rockets for planets, ranks (Cadet, Pilot, Captain, Commander), crystals to buy ship paints and outfits for Zib, a daily streak with one day off allowed.
+- Zib reads lines aloud with the device's own voice; a setting reads every question aloud for younger children.
+- Grown-ups area (press and hold the lock): every fact in a 12 × 12 grid (learned, mastered, hard), settings, a save code for backup, the answer log as CSV.
+- Works offline after the first visit and can be added to the Home Screen.
+- Good practice for the Year 4 multiplication tables check (MTC) in England.
+
+## Privacy
+
+- The child's first name, answers and progress are stored only on the device, in the browser's storage. Nothing is uploaded.
+- No account, no cookies, no ads. The game counts anonymous events (for example "mission finished") with TelemetryDeck: fixed event names and counts, a random device code that is hashed, never the child's name or answers.
+- Zib's voice uses a voice that runs on the device; if there is none, the child's name is not spoken.
+
+## Pages
+
+- [Times Galaxy](https://timesgalaxy.app/): what the game is, how it works, for parents, for teachers, FAQ.
+- [Play](https://timesgalaxy.app/play/): the game itself.
+- [For parents](https://timesgalaxy.app/parents/): how to start, the grown-ups area, how to keep progress safe (Home Screen, save code), the settings, feedback, a link to send to a friend.
+- [Privacy](https://timesgalaxy.app/privacy/): what is saved on the device and what is never sent.
+
+## FAQ
+
+- Is it free? Yes. The beta is free, with no ads and no account.
+- Which ages? Mainly 8–9 (Grade 3 / Year 4); also Grade 2 and Grades 4–5.
+- How long each day? About 5 minutes: one mission of about 20 questions.
+- Where is progress saved? Only in that browser on that device. A save code in the grown-ups area is the backup and moves progress to another device.
+- Is there an iPhone or iPad app? Not yet. Times Galaxy is a web app that works in Safari on iPhone and iPad.
+
+## Related tools by the same maker
+
+- [First Then Board](https://first-then.app/): a free First-Then board in the browser.
+- [Visual Schedule Daily Routine](https://visual-schedule.app/): an iPhone, iPad and Mac app that shows a child's day as pictures.
+- [Token Board: ABA Reward Chart](https://token-board.app/): a token board and reward chart app.
+- [Visual Timer for Kids](https://kidstimer.app/): a picture-reveal timer app.

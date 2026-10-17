@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Times Galaxy – times tables game (multiplication practice), free beta</title>
+<meta name="description" content="Master your times tables, 5 minutes a day. A free space game for children aged 8–9: one short multiplication mission a day, 12 planets, one for each times table. No account, no ads.">
+<link rel="canonical" href="https://timesgalaxy.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Times Galaxy – master your times tables, 5 minutes a day">
+<meta property="og:description" content="A free space game for times tables and multiplication practice. One short mission a day. No account, no ads.">
+<meta property="og:url" content="https://timesgalaxy.app/">
+<meta property="og:site_name" content="Times Galaxy">
+<meta property="og:image" content="https://timesgalaxy.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zib the alien co-pilot next to the words Times Galaxy: master your times tables, 5 minutes a day.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0B1033">
+<meta name="color-scheme" content="dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/lilita-one-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "@id": "https://timesgalaxy.app/#website", "name": "Times Galaxy", "url": "https://timesgalaxy.app/", "inLanguage": "en", "publisher": { "@id": "https://timesgalaxy.app/#org" } },
+    { "@type": "Organization", "@id": "https://timesgalaxy.app/#org", "name": "Apps for Parents", "email": "appsforparents@gmail.com",
+      "sameAs": ["https://first-then.app", "https://visual-schedule.app", "https://token-board.app", "https://kidstimer.app"] },
+    { "@type": "WebApplication", "@id": "https://timesgalaxy.app/#app", "name": "Times Galaxy", "url": "https://timesgalaxy.app/play/",
+      "description": "A daily 5-minute times tables game for children aged 8–9. Free beta in the web browser.",
+      "applicationCategory": "EducationalApplication", "operatingSystem": "Any (web browser)", "browserRequirements": "Requires JavaScript and a modern web browser.",
+      "inLanguage": "en", "isAccessibleForFree": true, "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children aged 8 to 9" },
+      "image": "https://timesgalaxy.app/og-image.png", "screenshot": ["https://timesgalaxy.app/img/galaxy-map.png", "https://timesgalaxy.app/img/new-fact.png", "https://timesgalaxy.app/img/mission-complete.png"],
+      "featureList": ["One mission a day, about 20 questions", "12 planets, one for each times table up to 12 × 12", "New facts with a dot picture and a trick", "Mistakes come back later; old facts are reviewed on later days", "Planet challenge: the whole table, no timer", "Grown-ups area with every fact: learned, mastered, hard", "No account, no ads, works offline after the first visit"],
+      "publisher": { "@id": "https://timesgalaxy.app/#org" } },
+    { "@type": "FAQPage", "@id": "https://timesgalaxy.app/#faq", "mainEntity": [
+      { "@type": "Question", "name": "Is Times Galaxy free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The beta is free, with no ads and no account." } },
+      { "@type": "Question", "name": "Which ages is it for?", "acceptedAnswer": { "@type": "Answer", "text": "Mainly children aged 8–9 (Grade 3 in the US, Year 4 in the UK). It also works for Grade 2 as a first start, and for Grades 4–5 to fill gaps and get faster." } },
+      { "@type": "Question", "name": "How long does it take each day?", "acceptedAnswer": { "@type": "Answer", "text": "About 5 minutes. There is one mission a day, about 20 questions, and an 8-question bonus on short days. Then Zib goes to sleep until tomorrow." } },
+      { "@type": "Question", "name": "Where is my child's progress saved?", "acceptedAnswer": { "@type": "Answer", "text": "Only in this browser, on this device. In the grown-ups area you can copy a save code as a backup and load it on another device. On iPhone and iPad, add the game to the Home Screen so Safari keeps the progress." } },
+      { "@type": "Question", "name": "Is my child's data safe?", "acceptedAnswer": { "@type": "Answer", "text": "Your child's name and answers stay on the device. There are no cookies, no ads and no account. Nothing your child types is sent anywhere." } }
+    ] }
+  ]
+}
+</script>
+<style>
+@font-face { font-family: "Lilita One"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/lilita-one-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Lilita One"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/lilita-one-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Nunito"; font-style: normal; font-weight: 200 1000; font-display: swap; src: url("fonts/nunito-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Nunito"; font-style: normal; font-weight: 200 1000; font-display: swap; src: url("fonts/nunito-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+:root {
+  --space: #0B1033; --deep: #1A2259; --panel: #141B48; --line: #3A4590;
+  --ink: #FFFFFF; --muted: #A9B3E8; --soft: #C9CFF2;
+  --cyan: #3DE0FF; --pink: #FF4FD8; --lime: #B8FF3D; --amber: #FFB547; --violet: #9B7BFF;
+  --display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --body: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background-color: var(--space); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.5; font-weight: 600;
+  background-image:
+    radial-gradient(2px 2px at 8% 12%, #ffffffaa 50%, transparent 51%), radial-gradient(2px 2px at 82% 8%, #ffffff88 50%, transparent 51%),
+    radial-gradient(3px 3px at 64% 30%, #ffffff66 50%, transparent 51%), radial-gradient(2px 2px at 22% 48%, #ffffff77 50%, transparent 51%),
+    radial-gradient(2px 2px at 92% 58%, #ffffff88 50%, transparent 51%), radial-gradient(3px 3px at 12% 80%, #ffffff55 50%, transparent 51%);
+  background-attachment: fixed;
+}
+a { color: var(--cyan); }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 16px) 16px 0; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-family: var(--display); font-size: 24px; letter-spacing: 0.5px; }
+.logo img { width: 40px; height: 40px; border-radius: 10px; }
+.beta { font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: var(--space); background: var(--amber); border-radius: 999px; padding: 3px 10px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: 0.5px; line-height: 1.08; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(38px, 9vw, 64px); }
+h2 { font-size: clamp(28px, 6vw, 40px); margin-bottom: 14px; }
+h3 { font-size: 22px; margin-bottom: 6px; }
+p { margin: 0 0 10px; }
+.muted { color: var(--muted); }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: center; padding: 28px 0 8px; }
+.hero .lead { font-size: 20px; color: var(--soft); margin-top: 14px; }
+.zib { width: min(200px, 48vw); height: auto; display: block; margin: 0 auto; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 64px; padding: 0 34px; border-radius: 20px; background: var(--cyan); color: var(--space); font-family: var(--display); font-size: 26px; letter-spacing: 0.5px; text-decoration: none; box-shadow: 0 0 22px #3DE0FF66; }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 22px; }
+.cta .small { font-size: 15px; color: var(--muted); }
+.planets { display: flex; justify-content: center; gap: 4px; margin: 6px 0 0; }
+.planets svg { width: 52px; height: 52px; }
+section { padding: 34px 0 6px; }
+.shots { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 12px; margin: 0 -2px; }
+.shots figure { margin: 0; flex: 0 0 auto; width: min(230px, 62vw); scroll-snap-align: start; }
+.shots img { display: block; width: 100%; height: auto; border-radius: 24px; border: 2px solid var(--line); background: var(--panel); }
+.shots figcaption { font-size: 15px; color: var(--soft); margin-top: 8px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; counter-reset: step; }
+.card { background: var(--panel); border: 2px solid var(--line); border-radius: 22px; padding: 18px; }
+.steps li { counter-increment: step; position: relative; padding-left: 64px; }
+.steps li::before { content: counter(step); position: absolute; left: 16px; top: 16px; width: 36px; height: 36px; border-radius: 999px; background: var(--cyan); color: var(--space); font-family: var(--display); font-size: 22px; display: flex; align-items: center; justify-content: center; }
+.steps p { color: var(--soft); margin: 0; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.ticks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; color: var(--soft); }
+.ticks li { padding-left: 30px; position: relative; }
+.ticks li::before { content: ""; position: absolute; left: 4px; top: 8px; width: 14px; height: 8px; border-left: 3px solid var(--lime); border-bottom: 3px solid var(--lime); transform: rotate(-45deg); }
+details { background: var(--panel); border: 2px solid var(--line); border-radius: 18px; padding: 14px 18px; }
+details + details { margin-top: 10px; }
+summary { cursor: pointer; font-weight: 900; font-size: 19px; }
+details p { color: var(--soft); margin: 10px 0 0; }
+.end { text-align: center; padding: 40px 0 10px; }
+footer { color: var(--muted); font-size: 15px; text-align: center; border-top: 2px solid var(--line); margin-top: 36px; padding: 20px 0 calc(env(safe-area-inset-bottom) + 30px); }
+footer a { color: inherit; }
+@media (min-width: 720px) {
+  .hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); padding-top: 44px; }
+  .zib { width: 240px; }
+  .shots { overflow: visible; justify-content: center; }
+  .shots figure { width: 230px; }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="./"><img src="icons/icon-192.png" alt="" width="40" height="40">Times Galaxy</a>
+    <span class="beta">Free beta</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <h1>Master your times tables, 5 minutes a day</h1>
+        <p class="lead">A free space game for children aged 8–9. Fly through 12 planets, one for each times table, until every multiplication fact is quick and sure.</p>
+        <div class="cta">
+          <a class="btn" href="./play/">Play free</a>
+          <span class="small">No account. No ads.<br>iPad, Chromebook, phone or computer.</span>
+        </div>
+      </div>
+      <div>
+        <svg class="zib" viewBox="0 0 120 120" aria-hidden="true"><g transform="rotate(-3 60 70)"><path d="M20 70 L8 42" fill="none" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><path d="M100 70 L112 42" fill="none" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><path d="M20 70 L8 42 M100 70 L112 42" fill="none" stroke="#B8FF3D" stroke-width="4" stroke-linecap="round"></path><path d="M46 32 L36 10 M74 32 L84 10" fill="none" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="36" cy="10" r="7" fill="#FF4FD8" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><circle cx="84" cy="10" r="7" fill="#FF4FD8" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><ellipse cx="60" cy="70" rx="44" ry="40" fill="#B8FF3D" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></ellipse><path d="M28 92 Q60 118 100 80 Q96 104 60 110 Q36 108 28 92 Z" fill="#86C81C"></path><path d="M31 64 Q44 47 57 64" fill="none" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><path d="M63 64 Q76 47 89 64" fill="none" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><ellipse cx="34" cy="78" rx="6" ry="3.6" fill="#FF8FE6"></ellipse><ellipse cx="86" cy="78" rx="6" ry="3.6" fill="#FF8FE6"></ellipse><path d="M48 82 Q60 103.6 72 82 Z" fill="#FF6B6B" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><path d="M52.8 90.4 Q60 98.8 67.2 90.4" fill="#FF4FD8" stroke="none"></path></g></svg>
+        <div class="planets" aria-hidden="true"><svg viewBox="-6 -6 132 132" aria-hidden="true"><defs><clipPath id="pc1_0"><circle cx="60" cy="60" r="40"></circle></clipPath></defs><circle cx="60" cy="60" r="40" fill="#FFB547" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><path d="M28 78 Q60 108 96 70 Q88 98 60 100 Q40 98 28 78 Z" fill="#D9871C" clip-path="url(#pc1_0)"></path><circle cx="50" cy="52" r="14" fill="#D9871C" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><circle cx="104" cy="30" r="7" fill="#fff" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle></svg><svg viewBox="-6 -6 132 132" aria-hidden="true"><defs><clipPath id="pc2_1"><circle cx="60" cy="60" r="40"></circle></clipPath></defs><circle cx="60" cy="60" r="40" fill="#FF4FD8" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><path d="M28 78 Q60 108 96 70 Q88 98 60 100 Q40 98 28 78 Z" fill="#C92AA8" clip-path="url(#pc2_1)"></path><path d="M60 20 Q50 60 60 100 L100 100 A40 40 0 0 0 100 20 Z" fill="#C92AA8" clip-path="url(#pc2_1)"></path></svg><svg viewBox="-6 -6 132 132" aria-hidden="true"><defs><clipPath id="pc10_2"><circle cx="60" cy="60" r="40"></circle></clipPath></defs><circle cx="60" cy="60" r="40" fill="#B8FF3D" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><path d="M28 78 Q60 108 96 70 Q88 98 60 100 Q40 98 28 78 Z" fill="#86C81C" clip-path="url(#pc10_2)"></path><ellipse cx="60" cy="64" rx="60" ry="14" fill="none" stroke="#0B1033" stroke-width="10" transform="rotate(-12 60 64)"></ellipse><ellipse cx="60" cy="64" rx="60" ry="14" fill="none" stroke="#FFB547" stroke-width="6" transform="rotate(-12 60 64)"></ellipse></svg><svg viewBox="-6 -6 132 132" aria-hidden="true"><defs><clipPath id="pc5_3"><circle cx="60" cy="60" r="40"></circle></clipPath></defs><circle cx="60" cy="60" r="40" fill="#3DE0FF" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><path d="M28 78 Q60 108 96 70 Q88 98 60 100 Q40 98 28 78 Z" fill="#1FB0D0" clip-path="url(#pc5_3)"></path><rect x="10" y="28" width="100" height="6" rx="3" fill="#1FB0D0" clip-path="url(#pc5_3)" transform="rotate(-8 60 60)"></rect><rect x="10" y="42" width="100" height="6" rx="3" fill="#1FB0D0" clip-path="url(#pc5_3)" transform="rotate(-8 60 60)"></rect><rect x="10" y="56" width="100" height="6" rx="3" fill="#1FB0D0" clip-path="url(#pc5_3)" transform="rotate(-8 60 60)"></rect><rect x="10" y="70" width="100" height="6" rx="3" fill="#1FB0D0" clip-path="url(#pc5_3)" transform="rotate(-8 60 60)"></rect><rect x="10" y="84" width="100" height="6" rx="3" fill="#1FB0D0" clip-path="url(#pc5_3)" transform="rotate(-8 60 60)"></rect></svg><svg viewBox="-6 -6 132 132" aria-hidden="true"><defs><clipPath id="pc3_4"><circle cx="60" cy="60" r="40"></circle></clipPath></defs><circle cx="60" cy="60" r="40" fill="#9B7BFF" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><path d="M28 78 Q60 108 96 70 Q88 98 60 100 Q40 98 28 78 Z" fill="#6E4FD6" clip-path="url(#pc3_4)"></path><circle cx="44" cy="48" r="9" fill="#6E4FD6" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><circle cx="72" cy="42" r="6" fill="#6E4FD6" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><circle cx="66" cy="74" r="11" fill="#6E4FD6" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle></svg><svg viewBox="-6 -6 132 132" aria-hidden="true"><defs><clipPath id="pc4_5"><circle cx="60" cy="60" r="40"></circle></clipPath></defs><circle cx="60" cy="60" r="40" fill="#FF8A5B" stroke="#0B1033" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></circle><path d="M28 78 Q60 108 96 70 Q88 98 60 100 Q40 98 28 78 Z" fill="#D1572C" clip-path="url(#pc4_5)"></path><path d="M30 32 Q60 44 90 32 L84 22 Q60 14 36 22 Z" fill="#fff" clip-path="url(#pc4_5)"></path><path d="M30 88 Q60 76 90 88 L84 98 Q60 106 36 98 Z" fill="#fff" clip-path="url(#pc4_5)"></path></svg></div>
+      </div>
+    </div>
+
+    <section aria-labelledby="see">
+      <h2 id="see">See the game</h2>
+      <div class="shots">
+        <figure><img src="img/galaxy-map.png" width="585" height="1266" alt="The galaxy map: planets for the times tables on a path, the child's rocket at planet times 6, and a big Launch button."><figcaption>The galaxy map: one planet for each times table.</figcaption></figure>
+        <figure><img src="img/new-fact.png" width="585" height="1266" loading="lazy" alt="A new-fact card for 6 times 9: a dot picture of 5 rows of 9 plus 1 row, with the totals 45 and 54, and the trick 5 times 9 is 45, plus 9 more is 54."><figcaption>A new fact comes with a dot picture and a trick.</figcaption></figure>
+        <figure><img src="img/mission-complete.png" width="585" height="1266" loading="lazy" alt="Mission complete: Zib cheers, 17 of 17 correct, progress on planet times 6, the next thing to buy, and a 7-day streak."><figcaption>One short mission a day, then Zib goes to sleep.</figcaption></figure>
+      </div>
+    </section>
+
+    <section aria-labelledby="how">
+      <h2 id="how">How it works</h2>
+      <ol class="steps">
+        <li class="card"><h3>First flight</h3><p>Zib, the alien co-pilot, asks two hard facts from each times table. The tables your child already knows light up at once and give their rockets.</p></li>
+        <li class="card"><h3>One mission a day</h3><p>About 20 questions, 2–5 minutes. New facts come with a picture and a trick. Mistakes come back a few questions later, and old facts come back on later days.</p></li>
+        <li class="card"><h3>Planet challenge</h3><p>When every fact of a planet is ready, the challenge comes the next day: the whole table once, with no timer. Pass it and the next planet opens.</p></li>
+        <li class="card"><h3>Galaxy explored</h3><p>All 12 planets, up to 12 × 12, and a certificate. After that, a short daily patrol keeps the facts fresh.</p></li>
+      </ol>
+    </section>
+
+    <section aria-label="For parents and teachers">
+      <div class="two">
+        <div class="card">
+          <h2 style="font-size:28px">For parents</h2>
+          <ul class="ticks">
+            <li>No account, no ads, no email.</li>
+            <li>Progress stays on this device. A save code in the grown-ups area is your backup.</li>
+            <li>Works in the browser on iPad, Chromebook, phone and computer, and offline after the first visit.</li>
+            <li>The grown-ups area (press and hold the lock) shows every fact: learned, mastered and the hard ones.</li>
+            <li>Settings for 10 × 10 or 12 × 12, the speed goal, a relaxed mode with no speed goal, and Zib's voice.</li>
+          </ul>
+          <p style="margin:12px 0 0"><a href="./parents/">The guide for parents →</a></p>
+        </div>
+        <div class="card">
+          <h2 style="font-size:28px">For teachers</h2>
+          <ul class="ticks">
+            <li>Send the link home. Children practise for 5 minutes a day.</li>
+            <li>No login, no class codes, no pupil data to manage.</li>
+            <li>Every fact up to 12 × 12, both ways round (7 × 8 and 8 × 7), so it fits the Year 4 multiplication tables check in England.</li>
+            <li>Facts are reviewed on later days, so practice turns into quick recall.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="faq">
+      <h2 id="faq">Questions</h2>
+      <details><summary>Is Times Galaxy free?</summary><p>Yes. The beta is free, with no ads and no account.</p></details>
+      <details><summary>Which ages is it for?</summary><p>Mainly children aged 8–9 (Grade 3 in the US, Year 4 in the UK). It also works for Grade 2 as a first start, and for Grades 4–5 to fill gaps and get faster.</p></details>
+      <details><summary>How long does it take each day?</summary><p>About 5 minutes. There is one mission a day, about 20 questions, and an 8-question bonus on short days. Then Zib goes to sleep until tomorrow.</p></details>
+      <details><summary>Where is my child's progress saved?</summary><p>Only in this browser, on this device. In the grown-ups area you can copy a save code as a backup and load it on another device. On iPhone and iPad, add the game to the Home Screen so Safari keeps the progress.</p></details>
+      <details><summary>Is my child's data safe?</summary><p>Your child's name and answers stay on the device. There are no cookies, no ads and no account. Nothing your child types is sent anywhere. Details are on the <a href="./privacy/">privacy page</a>.</p></details>
+    </section>
+
+    <div class="end">
+      <a class="btn" href="./play/">Play free</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>Times Galaxy · free beta · No account · No ads · Progress stays on your device</p>
+    <p><a href="./parents/">For parents</a> · <a href="./privacy/">Privacy</a> · <a href="mailto:appsforparents@gmail.com">appsforparents@gmail.com</a> · Apps for Parents</p>
+  </footer>
+</div>
+<script>
+// offline play after the first visit (same worker as the game)
+try { if ("serviceWorker" in navigator && window.isSecureContext) navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(function () {}); } catch (e) {}
+</script>
+<script type="module">
+// landing_view (docs/analytics.md, added 17 Oct 2026 by JG): one signal per page load, common parameters only.
+// clientUser is a random code made new for every page load and never saved, so nothing links two visits
+// or this page to the game. Test mode everywhere except timesgalaxy.app without ?test=1, like the game.
+import TelemetryDeck from "./vendor/telemetrydeck/telemetrydeck.js";
+try {
+  const test = location.hostname !== "timesgalaxy.app" || /[?&]test=1(&|$)/.test(location.search);
+  const ua = navigator.userAgent;
+  const platform = /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ipad" : /iPhone|iPod/.test(ua) ? "iphone" : /Android/.test(ua) ? "android" : "desktop";
+  const installed = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  const params = { premium: "false", beta: "true", platform, installed: installed ? "true" : "false" };
+  const td = new TelemetryDeck({ appID: "D6E0ACED-6790-45A9-9B08-2F987355A201", clientUser: crypto.randomUUID ? crypto.randomUUID() : String(Math.random()), testMode: test });
+  if (test) console.log("Analytics sent:", "landing_view", params);
+  td.signal("landing_view", params).catch(() => {});
+} catch (e) {}
+</script>
+</body>
+</html>

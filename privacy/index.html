@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy – Times Galaxy</title>
+<meta name="description" content="Times Galaxy privacy: your child's name and progress stay on your device. No account, no cookies, no ads.">
+<link rel="canonical" href="https://timesgalaxy.app/privacy/">
+<meta name="theme-color" content="#0B1033">
+<meta name="color-scheme" content="dark">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>
+@font-face { font-family: "Lilita One"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/lilita-one-latin.woff2") format("woff2"); }
+@font-face { font-family: "Nunito"; font-style: normal; font-weight: 200 1000; font-display: swap; src: url("../fonts/nunito-latin.woff2") format("woff2"); }
+:root { --space: #0B1033; --panel: #141B48; --line: #3A4590; --ink: #FFFFFF; --muted: #A9B3E8; --soft: #C9CFF2; --cyan: #3DE0FF; --amber: #FFB547; color-scheme: dark; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--space); color: var(--ink); font-family: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif; font-size: 17px; line-height: 1.55; font-weight: 600; }
+.wrap { max-width: 720px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 16px) 16px 0; }
+.logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-family: "Lilita One", "Arial Rounded MT Bold", sans-serif; font-size: 22px; }
+.logo img { width: 36px; height: 36px; border-radius: 9px; }
+h1, h2 { font-family: "Lilita One", "Arial Rounded MT Bold", sans-serif; font-weight: 400; letter-spacing: 0.5px; line-height: 1.15; }
+h1 { font-size: 34px; margin: 26px 0 4px; }
+h2 { font-size: 23px; margin: 28px 0 6px; }
+p, ul { margin: 8px 0; color: var(--soft); }
+ul { padding-left: 22px; }
+li { margin: 4px 0; }
+strong { color: var(--ink); }
+a { color: var(--cyan); }
+a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+.card { background: var(--panel); border: 2px solid var(--line); border-radius: 20px; padding: 14px 18px; margin-top: 16px; }
+.card p { color: var(--ink); margin: 0; }
+.muted { color: var(--muted); font-size: 15px; }
+footer { color: var(--muted); font-size: 14px; text-align: center; border-top: 2px solid var(--line); margin-top: 32px; padding: 20px 0 calc(env(safe-area-inset-bottom) + 30px); }
+footer a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="logo" href="../"><img src="../icons/icon-192.png" alt="" width="36" height="36">Times Galaxy</a>
+  <main>
+    <h1>Privacy</h1>
+    <p class="muted">Last updated: 17 October 2026 · free beta</p>
+
+    <div class="card"><p><strong>Short version:</strong> your child's name, answers and progress stay on your device. We do not get them. There is no account, no cookies and no ads. We count anonymous events, like “a mission was finished”, to learn if the game works.</p></div>
+
+    <h2>What is saved, and where</h2>
+    <ul>
+      <li>The child's first name (typed by a grown-up in the settings), the settings, every answer and the progress are saved only on your device, in your browser's storage (local storage and IndexedDB).</li>
+      <li>They are never uploaded. We have no server that could receive them.</li>
+      <li>The files of the game itself (pages, fonts, icons) are also saved in your browser, so the game works without internet. They hold no personal data.</li>
+    </ul>
+
+    <h2>The save code</h2>
+    <ul>
+      <li>In the grown-ups area you can copy a save code. It is your backup: it holds the progress, the settings and the child's first name.</li>
+      <li>The code is made on your device and only goes where you paste it. Keep it like a password, for example in your own notes.</li>
+    </ul>
+
+    <h2>Zib's voice</h2>
+    <ul>
+      <li>Zib speaks with the speech voices of your device. The game picks a voice that runs on the device, so the spoken words are not sent to a speech service.</li>
+      <li>If your browser has no such voice, Zib still speaks, but says “pilot” instead of the child's name.</li>
+    </ul>
+
+    <h2>What we do not do</h2>
+    <ul>
+      <li>No account and no sign-up. We never ask for an email address.</li>
+      <li>No cookies, so there is no cookie banner.</li>
+      <li>No ads and no ad networks. Nothing follows you to other sites.</li>
+      <li>The child's name, the answers typed in the game and the save code are never sent anywhere.</li>
+      <li>The fonts and pictures come from this site, not from other sites.</li>
+    </ul>
+
+    <h2>Usage counts</h2>
+    <p>We count anonymous events in the game to learn if it works for children: do they finish a mission, do they come back the next day. For this we use TelemetryDeck, a privacy-focused analytics service. Its code is a file on this site, and it sets no cookies. The home page sends one event when it opens (“home page opened”) with only the general details in the list below and a random code that is made new each time and never saved. This privacy page sends nothing.</p>
+    <p>What is sent:</p>
+    <ul>
+      <li>The name of the event, for example “first flight finished”, “mission finished”, “planet challenge passed”, “came back on day 7”, “grown-ups area opened”, “save code copied”, “rating given”.</li>
+      <li>A few numbers and fixed names with some events: how many planets the first flight found, how many questions a mission had, how many new facts it showed, which planet (a times table, like “6”), how many tries a challenge took, the day number since the first use, the streak, the question number where the child stopped, and which item was bought in the Hangar with its crystal price.</li>
+      <li>Ratings: on days 2, 7 and 14 your child can tap one of three faces after a mission, and in the grown-ups area you can give 1 to 5 stars and tap one fixed word (“too easy”, “too hard” or “wants to play again”). We get only that number, the word you tapped and the day number. There is no text field.</li>
+      <li>With every event: the type of device (iPad, iPhone, Android or computer), whether the game was opened from the Home Screen, and that this is the free beta.</li>
+      <li>A random code made by the game on your device the first time it starts. It lets us count how many devices play, without knowing who. It is scrambled again (hashed) before it is sent, and TelemetryDeck stores only the scrambled form. “Reset this child” keeps it.</li>
+      <li>What every browser sends with a web request: your browser and system version.</li>
+    </ul>
+    <p>What is never sent: the child's name, the answers, anything typed, the save code.</p>
+    <p>When there is no internet, the events wait on your device and are sent later.</p>
+    <p>Like any web request, these events reach TelemetryDeck from your IP address. TelemetryDeck uses the first part of it to guess the country and says it never stores IP addresses. We never see your IP address. TelemetryDeck rounds the time of each event to the hour and keeps the data on servers in Germany and the Netherlands.</p>
+
+    <h2>Hosting</h2>
+    <p>The site is hosted on GitHub Pages. Like any web host, GitHub may log technical data such as your IP address when a page loads. We do not use that data.</p>
+
+    <h2>Children</h2>
+    <p>The game is set up by a grown-up and played by a child. We do not collect personal data from children or from grown-ups. The game screens have no links to other sites. The grown-ups area opens only when you press and hold the lock.</p>
+
+    <h2>Deleting the data</h2>
+    <p>Everything is in your browser, so you are in control. In the grown-ups area, “Reset this child” deletes the progress. Clearing this site's data in your browser settings deletes everything.</p>
+
+    <h2>Contact</h2>
+    <p>Apps for Parents · <a href="mailto:appsforparents@gmail.com">appsforparents@gmail.com</a></p>
+  </main>
+  <footer>Times Galaxy · <a href="../">Home</a> · <a href="../play/">Play</a> · No account · No cookies · No ads</footer>
+</div>
+</body>
+</html>

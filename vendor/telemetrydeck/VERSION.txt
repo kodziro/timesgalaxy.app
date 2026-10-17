@@ -1,0 +1,13 @@
+TelemetryDeck JavaScript SDK
+package: @telemetrydeck/sdk
+version: 2.0.4
+file:    dist/telemetrydeck.js (ES module, unchanged)
+licence: MIT (LICENSE in this folder)
+sha256:  aae317a21a5c3acc9b8c106da73e69c1da02eb120681c3dc9975400eac575f0a
+source:  https://registry.npmjs.org/@telemetrydeck/sdk/-/sdk-2.0.4.tgz
+added:   2026-10-17
+
+To update: download the new tarball from the npm registry, copy dist/telemetrydeck.js and LICENSE
+here, update this file, and check that the game still sends the whitelisted signals
+(docs/analytics.md, QA section). The game uses TelemetryDeck's internal _build() to keep the
+time of a signal that was queued offline; check it still exists in the new version.

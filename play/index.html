@@ -1,0 +1,1383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Times Galaxy – times tables game</title>
+<meta name="description" content="Play Times Galaxy: a daily 5-minute times tables game for children aged 8–9. Free beta, no account, no ads.">
+<meta name="theme-color" content="#0B1033">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Times Galaxy">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="preload" href="../fonts/lilita-one-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Self-hosted fonts (SIL OFL 1.1, licenses in ../fonts/): no request to a third party, and they work offline. Nunito is a variable font, one file covers weights 600-900. */
+@font-face { font-family: "Lilita One"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/lilita-one-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Lilita One"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/lilita-one-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Nunito"; font-style: normal; font-weight: 200 1000; font-display: swap; src: url("../fonts/nunito-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Nunito"; font-style: normal; font-weight: 200 1000; font-display: swap; src: url("../fonts/nunito-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* Layout: one centered game column (max 540px) that fills the screen height; keypad pinned to the bottom of each play screen. Single dark "deep space" look on purpose. */
+:root {
+  --space: #0B1033;
+  --deep: #1A2259;
+  --panel: #141B48;
+  --line: #3A4590;
+  --ink: #FFFFFF;
+  --muted: #A9B3E8;
+  --soft: #C9CFF2;
+  --cyan: #3DE0FF;
+  --pink: #FF4FD8;
+  --lime: #B8FF3D;
+  --amber: #FFB547;
+  --violet: #9B7BFF;
+  --coral: #FF8A9A;
+  --on-bright: #0B1033;
+  --display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --body: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background-color: var(--space);
+  background-image:
+    radial-gradient(2px 2px at 8% 12%, #ffffffaa 50%, transparent 51%),
+    radial-gradient(2px 2px at 82% 8%, #ffffff88 50%, transparent 51%),
+    radial-gradient(3px 3px at 64% 30%, #ffffff66 50%, transparent 51%),
+    radial-gradient(2px 2px at 22% 48%, #ffffff77 50%, transparent 51%),
+    radial-gradient(2px 2px at 92% 58%, #ffffff88 50%, transparent 51%),
+    radial-gradient(3px 3px at 12% 80%, #ffffff55 50%, transparent 51%),
+    radial-gradient(2px 2px at 54% 90%, #ffffff77 50%, transparent 51%),
+    radial-gradient(2px 2px at 40% 18%, #ffffff55 50%, transparent 51%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select { font: inherit; color: inherit; }
+button { touch-action: manipulation; cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+#app {
+  max-width: 540px; margin: 0 auto; min-height: 100%;
+  padding-inline: 16px; padding-block: 16px 20px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.grow { flex: 1; }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.col { display: flex; flex-direction: column; gap: 10px; }
+.display { font-family: var(--display); letter-spacing: 0.5px; line-height: 1.05; }
+.eyebrow { font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: var(--cyan); }
+.muted { color: var(--muted); }
+.h1 { font-family: var(--display); font-size: clamp(28px, 7vw, 36px); line-height: 1.05; margin: 0; text-wrap: balance; }
+.card { background: var(--panel); border: 2px solid var(--line); border-radius: 22px; padding: 16px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 12px; font-weight: 900; font-size: 15px; background: var(--deep); border: 2px solid var(--line); }
+.btn { border: 0; border-radius: 20px; min-height: 60px; padding: 0 20px; font-family: var(--display); font-size: 22px; letter-spacing: 0.5px; background: var(--cyan); color: var(--on-bright); box-shadow: 0 0 22px #3DE0FF66; width: 100%; }
+.btn.secondary { background: var(--panel); color: var(--ink); border: 2px solid var(--line); box-shadow: none; }
+.btn.amber { background: var(--amber); box-shadow: 0 0 22px #FFB54766; }
+.btn.small { min-height: 46px; font-size: 18px; width: auto; }
+.btn:disabled { opacity: 0.45; box-shadow: none; }
+.link { background: none; border: 0; color: var(--soft); font-weight: 800; text-decoration: underline; padding: 6px; }
+
+/* Zib + speech bubble */
+.zibline { display: flex; align-items: flex-end; gap: 6px; }
+.zibline svg { flex-shrink: 0; }
+.bubble { background: var(--ink); color: var(--on-bright); border-radius: 18px 18px 18px 4px; padding: 10px 14px; font-weight: 800; font-size: 17px; line-height: 1.3; margin-bottom: 18px; min-width: 0; }
+
+/* Question area */
+.qcard { position: relative; background: var(--panel); border: 2px solid var(--line); border-radius: 28px; padding: 22px 16px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.q { font-family: var(--display); font-size: clamp(60px, 18vw, 96px); line-height: 1; font-variant-numeric: tabular-nums; }
+.answer { min-width: 150px; height: 76px; border-radius: 18px; border: 3px solid var(--cyan); box-shadow: 0 0 16px #3DE0FF55; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 48px; padding: 0 18px; font-variant-numeric: tabular-nums; }
+.answer.empty { border-style: dashed; border-color: var(--line); box-shadow: none; color: var(--line); }
+.answer.ok { border-color: var(--lime); box-shadow: 0 0 18px #B8FF3D88; }
+.answer.bad { border-color: var(--coral); box-shadow: none; }
+.feedback { min-height: 34px; display: flex; align-items: center; justify-content: center; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 14px; font-weight: 900; font-size: 16px; }
+.chip.boost { background: #B8FF3D22; border: 2px solid var(--lime); color: #DFFFA8; }
+.chip.ok { background: #3DE0FF22; border: 2px solid var(--cyan); color: #BFF6FF; }
+.chip.combo { background: #FF4FD822; border: 2px solid var(--pink); color: #FFC4F1; }
+
+.keypad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.key { min-height: clamp(54px, 8vh, 74px); border-radius: 18px; background: var(--panel); border: 2px solid var(--line); font-family: var(--display); font-size: 30px; }
+.key.go { background: var(--cyan); color: var(--on-bright); border: 0; }
+.key:active { transform: translateY(2px); }
+
+.dots { display: grid; gap: 3px; flex: 1; }
+.dots span { height: 10px; border-radius: 3px; background: #1F2866; }
+.dots span.done { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.dots span.now { background: var(--amber); }
+.iconbtn { width: 46px; height: 46px; border-radius: 14px; background: var(--deep); border: 2px solid var(--line); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* Planets in the first flight strip */
+.strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; }
+.strip.ten { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+.strip div { aspect-ratio: 1; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: clamp(10px, 2.6vw, 14px); background: var(--panel); border: 2px dashed var(--line); color: #6A74B8; }
+.strip div.known { background: var(--cyan); border: 0; color: var(--on-bright); box-shadow: 0 0 10px var(--cyan); }
+.strip div.new { background: var(--deep); border: 2px solid var(--line); color: var(--muted); }
+.strip div.asking { border: 3px solid var(--amber); color: var(--amber); }
+
+/* Galaxy map */
+.map { display: flex; flex-direction: column; gap: 6px; padding-block: 6px; }
+.node { display: flex; align-items: center; gap: 14px; background: none; border: 0; padding: 4px; text-align: left; width: 100%; }
+.node:nth-child(even) { flex-direction: row-reverse; text-align: right; }
+.planet { flex-shrink: 0; width: 72px; height: 72px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 24px; color: var(--on-bright); position: relative; }
+.planet.locked { background: var(--panel); border: 2px dashed var(--line); color: #6A74B8; }
+.planet.current { width: 88px; height: 88px; font-size: 30px; border: 4px solid var(--ink); }
+.planet .gold { position: absolute; right: -4px; top: -4px; width: 26px; height: 26px; border-radius: 999px; background: var(--amber); border: 2px solid var(--space); display: flex; align-items: center; justify-content: center; }
+.nodeinfo { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nodeinfo b { font-size: 17px; }
+.nodeinfo span { font-size: 14px; color: var(--muted); font-weight: 700; }
+.tag { align-self: flex-start; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 900; }
+.node:nth-child(even) .tag { align-self: flex-end; }
+.tag.claim { background: var(--amber); color: var(--on-bright); }
+.tag.now { background: var(--cyan); color: var(--on-bright); }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stat { background: var(--panel); border: 2px solid var(--line); border-radius: 16px; padding: 10px 6px; text-align: center; }
+.stat b { display: block; font-family: var(--display); font-size: 26px; line-height: 1.1; font-weight: 400; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 13px; font-weight: 700; color: var(--muted); }
+.factchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.factchips span { background: var(--cyan); color: var(--on-bright); border-radius: 10px; padding: 4px 12px; font-family: var(--display); font-size: 19px; }
+.bar { height: 14px; border-radius: 999px; background: #1F2866; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--cyan); border-radius: 999px; }
+
+.galaxy { position: relative; width: 100%; height: clamp(380px, 52vh, 560px); }
+.galaxy > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mplanet { border: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-family: var(--display); padding: 0; }
+.mplanet:disabled { cursor: default; }
+.mplanet .gold, .mplanet .rbadge, .mplanet .claimdot { position: absolute; right: -6px; top: -6px; width: 26px; height: 26px; border-radius: 999px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--space); }
+.mplanet .rbadge { background: var(--deep); }
+.mplanet .claimdot { background: var(--amber); }
+.mplanet .gold { background: var(--amber); }
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+
+/* Grown-ups panel */
+.gp { background: #F3F5FF; color: #0B1033; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+.gp h2 { font-family: var(--display); font-weight: 400; font-size: 28px; margin: 0; }
+.gp h3 { margin: 0; font-size: 17px; font-weight: 900; }
+.gp .box { background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.gp label { font-weight: 800; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.gp input[type=text], .gp input[type=number], .gp select { border: 2px solid #D5DAF2; border-radius: 12px; padding: 8px 10px; background: #FFFFFF; color: #0B1033; color-scheme: light; }
+.gp .check { flex-direction: row; align-items: center; gap: 10px; }
+.gp .check input { width: 22px; height: 22px; }
+.gp .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 480px) { .gp .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.gp .beta { background: #FFF3DC; border: 2px solid #FFB547; border-radius: 14px; padding: 10px 12px; font-size: 14px; font-weight: 800; color: #0B1033; margin: 0; }
+.rate { align-items: center; text-align: center; gap: 10px; }
+.faces { display: flex; justify-content: center; gap: 14px; }
+.face { background: none; border: 0; padding: 4px; border-radius: 999px; min-width: 72px; min-height: 72px; }
+.face:active { transform: scale(0.94); }
+.gp .stars { display: flex; gap: 4px; }
+.gp .star { background: none; border: 0; padding: 4px; min-width: 48px; min-height: 48px; border-radius: 10px; }
+.gp .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gp .chip2 { border: 2px solid #D5DAF2; border-radius: 999px; min-height: 40px; padding: 0 14px; background: #FFFFFF; color: #0B1033; font-weight: 800; }
+.gp .chip2.on { background: #2A3BB0; border-color: #2A3BB0; color: #FFFFFF; }
+.gp .hint { background: #E3F8FF; border: 2px solid #3DE0FF; border-radius: 14px; padding: 10px 12px; font-size: 14px; font-weight: 800; color: #0B1033; display: flex; flex-direction: column; gap: 8px; }
+.gp .note { font-size: 13px; color: #3D4680; font-weight: 700; }
+.gp .gbtn { border: 0; border-radius: 12px; min-height: 44px; padding: 0 14px; font-weight: 900; background: #2A3BB0; color: #FFFFFF; }
+.gp .gbtn.light { background: #E2E6FA; color: #0B1033; }
+.gp .gbtn.danger { background: #B3261E; color: #FFFFFF; }
+.gp .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.gp .tile { background: #FFFFFF; border-radius: 14px; padding: 10px; }
+.gp .tile b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; font-variant-numeric: tabular-nums; }
+.gp .tile span { font-size: 12px; font-weight: 800; color: #3D4680; }
+.fgwrap { overflow-x: auto; }
+.fg { border-collapse: separate; border-spacing: 2px; font-variant-numeric: tabular-nums; }
+.fg th { font-size: 11px; color: #3D4680; font-weight: 900; width: 24px; height: 22px; }
+.fg td { width: 24px; height: 24px; border-radius: 5px; }
+.fg td.m { background: #E59A12; } .fg td.l { background: #3DA9E0; } .fg td.s { background: #F2B8C0; } .fg td.n { background: #E2E6FA; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; font-weight: 800; color: #3D4680; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.logwrap { overflow-x: auto; max-height: 320px; overflow-y: auto; border: 1px solid #E3E7F7; border-radius: 10px; }
+.log { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+.log th, .log td { text-align: left; padding: 5px 8px; border-bottom: 1px solid #E3E7F7; white-space: nowrap; }
+.log th { position: sticky; top: 0; background: #F3F5FF; }
+.log .bad { color: #B3261E; font-weight: 900; }
+.log .ok { color: #1B7A3A; font-weight: 900; }
+textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace; font-size: 12px; color: #0B1033; background: #FFFFFF; border: 2px solid #D5DAF2; border-radius: 10px; color-scheme: light; }
+
+.hold { position: relative; overflow: hidden; }
+.hold::after { content: ""; position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--amber); }
+.hold.holding::after { width: 100%; transition: width 1.5s linear; }
+.center { text-align: center; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (prefers-reduced-motion: reduce) { .hold.holding::after { transition: none; } .pop { animation: none !important; } }
+.pop { animation: pop 0.35s ease-out; }
+@keyframes pop { from { transform: scale(0.85); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+.chip.review { background: #FFB54722; border: 2px solid var(--amber); color: #FFE2B0; }
+.parade { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; min-height: 90px; }
+.parade div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-family: var(--display); font-size: 18px; animation: flyin 0.7s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes flyin { from { transform: translateY(120px) scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+.launch { animation: launch 1.6s ease-in 0.4s both; }
+@keyframes launch { 0% { transform: translateY(0); } 15% { transform: translateY(6px); } 100% { transform: translateY(-120px); } }
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.week div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; color: var(--muted); }
+.week i { width: 34px; height: 34px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: var(--deep); border: 2px solid var(--line); font-style: normal; }
+.week i.on { background: var(--amber); border: 0; box-shadow: 0 0 10px var(--amber); }
+.swatches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.swatch { background: var(--panel); border: 2px solid var(--line); border-radius: 18px; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 900; }
+.swatch.sel { border-color: var(--cyan); box-shadow: 0 0 14px #3DE0FF66; }
+.hangar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.hangar div { background: var(--panel); border: 2px solid var(--line); border-radius: 16px; min-height: 92px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-family: var(--display); font-size: 15px; color: var(--muted); }
+.cert { background: #FFF8EC; color: #0B1033; border-radius: 22px; padding: 22px 18px; border: 6px double #FFB547; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.cert .big { font-family: var(--display); font-size: clamp(30px, 8vw, 40px); line-height: 1.05; }
+.cert .rk { display: grid; grid-template-columns: repeat(6, auto); justify-content: center; gap: 4px 6px; } /* 12 rockets = two rows of 6 (10 × 10 setting: 6 + 4) */
+.cert .line { width: 70%; border-top: 2px solid #E8D8B8; margin-top: 6px; }
+.dotgrid { display: grid; gap: 4px; justify-content: center; }
+.dotgrid i { width: var(--d, 12px); height: var(--d, 12px); border-radius: 999px; display: block; }
+.meet { border-color: var(--cyan); align-items: center; text-align: center; gap: 16px; padding: 22px 16px; }
+.howto { font-weight: 800; color: var(--soft); font-size: 17px; }
+/* dot pictures: rows match the trick, running totals so the child never counts single dots */
+.dp { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.dprow { display: flex; align-items: center; gap: 4px; }
+.dprow.gap { margin-top: 7px; }
+.dprow i { width: var(--d); height: var(--d); border-radius: 999px; display: block; flex-shrink: 0; }
+.dprow i.g { margin-left: 7px; }
+.dprow i.h { background: transparent !important; border: 2px dashed var(--muted); }
+.dprow b { min-width: 46px; margin-left: 8px; font-family: var(--display); font-weight: 400; font-size: calc(var(--d) + 3px); line-height: 1; color: var(--amber); text-align: left; }
+.bubble[data-say] { cursor: pointer; }
+.bubble .spk { display: inline-block; margin-left: 6px; opacity: 0.55; vertical-align: -2px; }
+.goal { display: flex; align-items: center; gap: 12px; }
+.goal .bar { flex: 1; }
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+@media (prefers-reduced-motion: reduce) { .parade div, .launch { animation: none; } }
+</style>
+</head>
+<body>
+<div id="app" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- constants ----------
+  var ORDER = [1, 2, 10, 5, 3, 4, 6, 9, 8, 7, 11, 12];
+  var HARD = { 1: [7, 9], 2: [7, 8], 10: [7, 9], 5: [7, 8], 3: [7, 8], 4: [7, 8], 6: [7, 8], 9: [7, 8], 8: [8, 7], 7: [7, 8], 11: [11, 12], 12: [12, 7] };
+  var PCOL = { 1: "#FFB547", 2: "#FF4FD8", 10: "#B8FF3D", 5: "#3DE0FF", 3: "#9B7BFF", 4: "#FF8A5B", 6: "#5BE3A8", 9: "#FF6B9E", 8: "#7FB2FF", 7: "#C9A2FF", 11: "#FFD84D", 12: "#4DE1D2" };
+  var TIPS = {
+    1: "Times 1 stays the same. 1 × 7 = 7.",
+    2: "Times 2 is double. 7 + 7 = 14.",
+    10: "Times 10: add a 0. 7 → 70.",
+    5: "Count by 5s: 5, 10, 15, 20…",
+    3: "Add it 3 times: 7 + 7 + 7.",
+    4: "Double, then double again.",
+    6: "Times 5, plus one more.",
+    9: "Times 10, take one away. 70 − 7 = 63.",
+    8: "Double, double, double.",
+    7: "Times 5, plus times 2.",
+    11: "Write it twice: 11 × 7 = 77.",
+    12: "Times 10, plus times 2."
+  };
+  // Zib outfits: a second thing to spend crystals on, visible on every screen
+  var HATS = [["none", "No hat", 0], ["party", "Party hat", 150], ["phones", "Headphones", 250], ["flower", "Flower", 400], ["crown", "Crown", 600], ["wizard", "Wizard hat", 900], ["helmet", "Space helmet", 1200]];
+  var NEW_MIN = 3, NEW_MAX = 5;      // new facts per mission (starts at 3, grows only when new facts go well)
+  var PAINTS = [["#FFFFFF", "Star white", 0], ["#FF4FD8", "Nova pink", 100], ["#B8FF3D", "Alien lime", 200], ["#FFB547", "Sun gold", 350], ["#3DE0FF", "Ice blue", 550], ["#FF6B6B", "Mars red", 800]];
+  var GAPS = [1, 3, 7, 14, 30];      // days until the next review after each quick correct review (mastered facts keep rare check-ins)
+  var BONUS_LEN = 8;
+  var SAVE_KEY = "times-galaxy-proto-v2";
+  var TEST = /[?&]test=1(&|$)/.test(location.search); // test tools ("Next day", "Run the first flight again") only with ?test=1
+  var LINES_OK = ["Nice!", "Great!", "Yes!", "Boom!", "Super!", "You got it!", "Zoom zoom!", "Rocket brain!", "Easy peasy!", "Wow!"];
+
+  // ---------- state ----------
+  var lastSpoken = "", lastBubble = "", S = null, view = "setup", T = null, typed = "", busy = false, gpConfirm = false, gpCopy = "", gpCode = "", gpLoad = null, gpStars = 0, gpChip = "", openPlanet = null, returnView = "map";
+
+  function freshState() {
+    return { name: "", speed: 4, relaxed: false, max: 12, voice: true, sound: true, len: 20, day: 1,
+      facts: {}, planets: {}, flightDone: false, crystals: 0, log: [], played: [], mainDone: {}, bonusDone: {},
+      ship: "#FFFFFF", owned: ["#FFFFFF"], parade: [], hat: "none", hats: ["none"], newCap: NEW_MIN, challengeDay: {}, challengeAns: {},
+      firstLaunch: ymd(new Date()), dayOffset: 0 };
+  }
+  function upgrade(s) { // older saves
+    var f = freshState(); ["hat", "hats", "newCap", "challengeDay", "challengeAns"].forEach(function (k) { if (s[k] === undefined) s[k] = f[k]; });
+    if (!s.firstLaunch) { s.firstLaunch = f.firstLaunch; s.dayOffset = (s.day || 1) - 1; } // prototype saves: keep their day number, follow the calendar from now on
+    return s;
+  }
+
+  // ---------- calendar day ----------
+  // The engine counts in whole days (S.day): reviews, mastery days, streak, "challenge tomorrow", day budget.
+  // In the web beta S.day = calendar days since the first launch + 1 (local date), so a day off counts as a day.
+  // It only moves forward, and only between activities (see render), never in the middle of a mission.
+  // dayOffset is 0 for real players; "Next day" (?test=1) adds 1 to it.
+  function ymd(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function dayIndex(s) { var p = s.split("-"); return Math.round(Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5); }
+  function syncDay() {
+    if (!S || !S.firstLaunch) return false;
+    var d = 1 + dayIndex(ymd(new Date())) - dayIndex(S.firstLaunch) + (S.dayOffset || 0);
+    if (d <= S.day) return false; // clock set back or same day: keep the day
+    S.day = d; save(); return true;
+  }
+  var ACTIVE = { play: 1, flight: 1, missionEnd: 1, challengeEnd: 1 }; // views that still use T and today's day
+  function load() { try { var raw = localStorage.getItem(SAVE_KEY); if (raw) { var s = JSON.parse(raw); if (s && s.facts) return s; } } catch (e) {} return null; }
+  function save() {
+    S.savedAt = Date.now(); var json = JSON.stringify(S);
+    try { localStorage.setItem(SAVE_KEY, json); } catch (e) {}
+    withDb(function (db) { db.transaction("save", "readwrite").objectStore("save").put(json, SAVE_KEY); });
+  }
+  // Second copy of the save in IndexedDB. On start the newer of the two copies wins (savedAt).
+  var DB = null, dbWait = [];
+  function withDb(cb) {
+    if (DB) { try { cb(DB); } catch (e) {} return; }
+    if (!window.indexedDB) return;
+    dbWait.push(cb); if (dbWait.length > 1) return;
+    try {
+      var r = indexedDB.open("times-galaxy", 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore("save"); };
+      r.onsuccess = function () { DB = r.result; dbWait.splice(0).forEach(function (f) { try { f(DB); } catch (e) {} }); };
+      r.onerror = r.onblocked = function () { dbWait = []; };
+    } catch (e) { dbWait = []; }
+  }
+  function loadMirror() {
+    withDb(function (db) {
+      var g = db.transaction("save").objectStore("save").get(SAVE_KEY);
+      g.onsuccess = function () {
+        var s = null; try { s = g.result ? JSON.parse(g.result) : null; } catch (e) {}
+        if (!s || !s.facts) { if (S && S.savedAt) save(); return; }               // no mirror yet: write one
+        if (S && S.facts && (S.savedAt || 0) >= (s.savedAt || 0)) return;          // localStorage copy is as new
+        if (ACTIVE[view] || view === "grownups") return;                           // never swap the save under a running game
+        S = upgrade(s); try { localStorage.setItem(SAVE_KEY, g.result); } catch (e) {}
+        view = S.flightDone ? "map" : "intro"; render();
+      };
+    });
+  }
+  // Ask the browser not to clear this site's storage on its own (Safari may clear it after 7 days without a visit).
+  function askPersist() { try { if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(function (p) { if (!p) return navigator.storage.persist(); }).catch(function () {}); } catch (e) {} }
+
+  // ---------- helpers ----------
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function key(a, b) { return Math.min(a, b) + "x" + Math.max(a, b); }
+  function parts(k) { var p = k.split("x"); return [+p[0], +p[1]]; }
+  function F(k) { return S.facts[k] || (S.facts[k] = { learned: false, days: [], correct: 0, wrong: 0, tsum: 0, tn: 0, step: 0, due: null }); }
+  function order() { return ORDER.filter(function (t) { return t <= S.max; }); }
+  function planetFacts(t) { var r = []; for (var a = 1; a <= S.max; a++) { var k = key(t, a); if (r.indexOf(k) < 0) r.push(k); } return r; }
+  function allFacts() { var r = []; for (var a = 1; a <= S.max; a++) for (var b = a; b <= S.max; b++) r.push(a + "x" + b); return r; }
+  function easy(k) { var p = parts(k); return p[0] === 1 || p[0] === 2 || p[0] === 10 || p[1] === 10; }
+  function need(k) { return easy(k) ? 1 : 3; }
+  function mastered(k) { return F(k).days.length >= need(k); }
+  function learned(k) { return F(k).learned || mastered(k); }
+  function learnFact(k, delay) { var f = F(k); if (!f.learned) { f.learned = true; if (f.due === null) { f.due = S.day + (delay || 1); f.step = 0; } } }
+  function pstat(t) { return S.planets[t] || "locked"; }
+  function current() { var o = order(); for (var i = 0; i < o.length; i++) if (pstat(o[i]) !== "explored") return o[i]; return null; }
+  function gold(t) { return planetFacts(t).every(mastered); }
+  function challengeReady(t) { return planetFacts(t).every(function (k) { return learned(k) || F(k).correct > 0; }); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function orient(k, t) { var p = parts(k); if (t && (p[0] === t || p[1] === t)) { var o = p[0] === t ? p[1] : p[0]; return Math.random() < 0.5 ? { k: k, a: t, b: o } : { k: k, a: o, b: t }; } return Math.random() < 0.5 ? { k: k, a: p[0], b: p[1] } : { k: k, a: p[1], b: p[0] }; }
+  function exploredCount() { return order().filter(function (t) { return pstat(t) === "explored"; }).length; }
+  function rankScore() { return exploredCount(); }
+  function rank() { var n = rankScore(); return n < 4 ? "Cadet" : n < 7 ? "Pilot" : n < 10 ? "Captain" : "Commander"; }
+  function nextRank() { var n = rankScore(); var t = n < 4 ? ["Pilot", 4] : n < 7 ? ["Captain", 7] : n < 10 ? ["Commander", 10] : null; return t ? [t[0], Math.ceil(t[1] - n)] : null; }
+  function countLearned() { return allFacts().filter(learned).length; }
+  function countMastered() { return allFacts().filter(mastered).length; }
+  function dueFacts() { return allFacts().filter(function (k) { var f = F(k); return learned(k) && f.due !== null && f.due <= S.day && !(easy(k) && mastered(k)); }); }
+  function homePlanet(k) { var p = parts(k), o = order(); for (var i = o.length - 1; i >= 0; i--) if (p[0] === o[i] || p[1] === o[i]) { if (pstat(o[i]) === "explored") return o[i]; } return Math.max(p[0], p[1]); }
+  function nm() { return S.name ? esc(S.name) : "pilot"; }
+  function streak() { var c = 0, miss = 0; for (var d = S.day; d >= 1; d--) { if (S.played.indexOf(d) >= 0) { c++; miss = 0; } else if (d !== S.day) { miss++; if (miss >= 2) break; } } return c; }
+  function todayMinutes() { return S.log.filter(function (e) { return e.day === S.day; }).reduce(function (a, e) { return a + Math.min(e.s, 30); }, 0) / 60; }
+  function markPlayed() { if (S.played.indexOf(S.day) < 0) S.played.push(S.day); }
+  function todayAnswers() { return S.log.filter(function (e) { return e.day === S.day; }).length; }
+  // One day = one main thing. The planet challenge is the first thing of a new day (never after a mission or bonus),
+  // so it also checks yesterday's learning. The bonus comes only after a normal mission on a short day.
+  function canChallengeToday() { var d = S.day; return !S.mainDone[d] && !S.bonusDone[d] && !S.challengeDay[d] && S.flightDay !== d; }
+  function bonusOk() { var d = S.day; return !S.bonusDone[d] && !S.challengeDay[d] && S.flightDay !== d && todayMinutes() < 6 && todayAnswers() < S.len + 12; }
+  function mainLen() {
+    if (S.flightDay === S.day) return Math.max(8, Math.ceil(S.len / 2));                 // day 1: the first flight already took a few minutes
+    if (S.challengeDay[S.day]) return Math.max(8, S.len + BONUS_LEN - (S.challengeAns[S.day] || 0)); // after a challenge: the rest of the day's budget (about 28 answers)
+    return S.len;
+  }
+  function shopItems() { return PAINTS.map(function (p) { return { kind: "paint", id: p[0], name: p[1], price: p[2], own: S.owned.indexOf(p[0]) >= 0 }; })
+    .concat(HATS.map(function (h) { return { kind: "hat", id: h[0], name: h[1], price: h[2], own: S.hats.indexOf(h[0]) >= 0 }; })); }
+  function nextGoal() { var xs = shopItems().filter(function (x) { return !x.own; }).sort(function (a, b) { return a.price - b.price; }); return xs[0] || null; }
+
+  // ---------- sound, voice, confetti ----------
+  var AC = null;
+  function audio() { if (!S.sound) return null; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state !== "running") AC.resume(); } catch (e) { AC = null; } return AC; }
+  function tone(freq, start, dur, type, vol) {
+    var a = audio(); if (!a) return;
+    var o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime + start;
+    o.type = type || "sine"; o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol || 0.18, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0 + dur + 0.05);
+  }
+  function sfx(name, n) {
+    if (!S || !S.sound) return;
+    if (name === "ok") { tone(660, 0, 0.12, "triangle"); tone(990, 0.08, 0.16, "triangle"); }
+    else if (name === "boost") { var b = 660 + Math.min(n || 0, 8) * 40; tone(b, 0, 0.1, "square", 0.08); tone(b * 1.25, 0.07, 0.1, "square", 0.08); tone(b * 1.5, 0.14, 0.18, "square", 0.08); }
+    else if (name === "wrong") { tone(220, 0, 0.25, "sine", 0.15); tone(180, 0.12, 0.3, "sine", 0.12); }
+    else if (name === "win") { [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, i * 0.11, 0.35, "triangle", 0.16); }); }
+    else if (name === "launch") { var a = audio(); if (!a) return; var o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime; o.type = "sawtooth"; o.frequency.setValueAtTime(90, t0); o.frequency.exponentialRampToValueAtTime(900, t0 + 1.4); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.09, t0 + 0.2); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.6); o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0 + 1.7); }
+  }
+  // Speech stays on the device. Some browsers (Chrome) also offer online voices that send the text to a server,
+  // so Zib always uses an English voice that runs on the device. If there is none, the child's name is left out.
+  function localVoice() {
+    try {
+      var en = window.speechSynthesis.getVoices().filter(function (v) { return v.localService && /^en([-_]|$)/i.test(v.lang); });
+      return en.filter(function (v) { return v.default; })[0] || en.filter(function (v) { return /GB|US/i.test(v.lang); })[0] || en[0] || null;
+    } catch (e) { return null; }
+  }
+  function say(text) {
+    if (!S || !S.voice || !window.speechSynthesis) return;
+    try {
+      var v = localVoice(); if (!v && S.name) text = text.split(S.name).join("pilot");
+      window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(text.replace(/×/g, " times ")); if (v) u.voice = v; u.rate = 1; u.pitch = 1.25; window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  // iOS starts sound and speech only from a tap. The first touch or key press unlocks both
+  // (a silent utterance), so Zib can also speak lines that come after a short delay.
+  var unlocked = false;
+  function unlockAudio() {
+    if (unlocked || !S) return; unlocked = true; audio();
+    try { if (S.voice && window.speechSynthesis) { var u = new SpeechSynthesisUtterance(" "); u.volume = 0; window.speechSynthesis.speak(u); } } catch (e) {}
+  }
+  document.addEventListener("pointerdown", unlockAudio, true);
+  document.addEventListener("keydown", unlockAudio, true);
+  var confettiRun = 0;
+  function confetti() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var c = document.getElementById("confetti"), x = c.getContext("2d"), W = c.width = innerWidth, H = c.height = innerHeight;
+    var cols = ["#3DE0FF", "#FF4FD8", "#B8FF3D", "#FFB547", "#9B7BFF", "#FFFFFF"], ps = [];
+    for (var i = 0; i < 140; i++) ps.push({ x: W / 2 + (Math.random() - 0.5) * 80, y: H * 0.45, vx: (Math.random() - 0.5) * 14, vy: -6 - Math.random() * 10, r: Math.random() * 6.28, s: 5 + Math.random() * 7, c: pick(cols) });
+    var t = 0, run = ++confettiRun;
+    (function step() {
+      if (run !== confettiRun) { x.clearRect(0, 0, W, H); return; }
+      t++; x.clearRect(0, 0, W, H);
+      ps.forEach(function (p) { p.vy += 0.35; p.x += p.vx; p.y += p.vy; p.r += 0.2; x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); });
+      if (t < 110) requestAnimationFrame(step); else x.clearRect(0, 0, W, H);
+    })();
+  }
+
+  // ---------- recording + spaced reviews ----------
+  // The trick always comes from the EASIER of the two tables (6 × 1 uses the ×1 trick, 6 × 11 the ×11 trick),
+  // not from the planet the child is on.
+  function easeRank(t, n) { if (t === 11) return n <= 9 ? 2.5 : 10.5; return { 1: 0, 10: 1, 2: 2, 5: 4, 3: 5, 4: 6, 6: 7, 9: 8, 8: 9, 7: 10, 12: 11 }[t]; }
+  function trick(k) { var p = parts(k); return easeRank(p[0], p[1]) <= easeRank(p[1], p[0]) ? { t: p[0], n: p[1] } : { t: p[1], n: p[0] }; }
+  function howTo(k) {
+    var tr = trick(k), t = tr.t, n = tr.n, r = t * n;
+    if (t === 1) return "Times 1 stays the same: " + n;
+    if (t === 2) return n + " + " + n + " = " + r;
+    if (t === 10) return "Put a 0 after " + n + ": " + r;
+    if (t === 3) return n + " + " + n + " + " + n + " = " + r;
+    if (t === 4) return "Double " + n + " = " + 2 * n + ", double again = " + r;
+    if (t === 5) { if (n > 10) return "5 × 10 = 50, then " + (n === 11 ? "55" : "55, 60"); var c = []; for (var i = 1; i <= n; i++) c.push(5 * i); return "Count by 5s: " + c.join(", "); }
+    if (t === 6) return "5 × " + n + " = " + 5 * n + ", plus " + n + " more = " + r;
+    if (t === 7) return "5 × " + n + " = " + 5 * n + ", plus 2 × " + n + " = " + 2 * n + ", together " + r;
+    if (t === 8) return "Double " + n + " three times: " + 2 * n + ", " + 4 * n + ", " + r;
+    if (t === 9) return "10 × " + n + " = " + 10 * n + ", take away " + n + " = " + r;
+    if (t === 11) return n < 10 ? "Write " + n + " twice: " + r : "10 × " + n + " = " + 10 * n + ", plus " + n + " = " + r;
+    if (t === 12) return "10 × " + n + " = " + 10 * n + ", plus 2 × " + n + " = " + 2 * n + ", together " + r;
+    return n + " × " + t + " = " + r;
+  }
+  // Dot picture that shows the trick: blocks in different colors, a running total at the end of a block,
+  // a small gap after every 5 dots and every 5 rows. ×5 and ×10 are drawn as groups of 5 or 10 (count by 5s / 10s).
+  function dotPicture(k) {
+    var tr = trick(k), t = tr.t, n = tr.n, rows = [], i, P = "var(--pink)", C = "var(--cyan)", L = "var(--lime)";
+    function row(cols, col, lab, hollow) { rows.push({ c: cols, col: col, lab: lab === "" || lab === undefined ? "" : String(lab), h: !!hollow }); }
+    if (t === 5 || t === 10) for (i = 1; i <= n; i++) row(t, i % 2 ? P : C, t * i);
+    else if (t === 1) row(n, P, n);
+    else if (t === 2 || t === 3) for (i = 1; i <= t; i++) row(n, i % 2 ? P : C, n * i);
+    else if (t === 4) for (i = 1; i <= 4; i++) row(n, i <= 2 ? P : C, i === 2 ? 2 * n : i === 4 ? 4 * n : "");
+    else if (t === 8) for (i = 1; i <= 8; i++) row(n, i <= 2 ? P : i <= 4 ? C : L, i === 2 ? 2 * n : i === 4 ? 4 * n : i === 8 ? 8 * n : "");
+    else if (t === 9) { for (i = 1; i <= 9; i++) row(n, P, i === 9 ? 9 * n : ""); row(n, P, "− " + n, true); }
+    else { var base = t >= 11 ? 10 : 5; for (i = 1; i <= t; i++) row(n, i <= base ? P : C, i === base ? base * n : i === t ? t * n : ""); }
+    var m = Math.max(rows.length, rows[0].c), d = m <= 6 ? 20 : m <= 8 ? 16 : m <= 10 ? 14 : 11;
+    var h = '<div class="dp" style="--d:' + d + 'px" role="img" aria-label="' + rows.length + ' rows of ' + rows[0].c + ' dots">';
+    rows.forEach(function (r, ri) {
+      h += '<div class="dprow' + (ri > 0 && ri % 5 === 0 ? " gap" : "") + '">';
+      for (var j = 0; j < r.c; j++) h += '<i class="' + (j > 0 && j % 5 === 0 ? "g" : "") + (r.h ? " h" : "") + '" style="background:' + r.col + '"></i>';
+      h += '<b>' + r.lab + '</b></div>';
+    });
+    return h + '</div>';
+  }
+  function goal() {
+    if (S.relaxed) return Infinity;
+    var xs = S.log.filter(function (e) { if (!e.ok || e.mode === "first flight" || e.mode === "after new-fact card") return false; var ab = e.q.split(" × "); return easy(key(+ab[0], +ab[1])); }).slice(-20).map(function (e) { return e.s; });
+    if (xs.length < 6) return S.speed;
+    xs.sort(function (a, b) { return a - b; });
+    var med = xs[Math.floor(xs.length / 2)];
+    return Math.min(8, Math.max(S.speed, Math.round((med * 1.5 + 0.5) * 2) / 2));
+  }
+  function record(mode, q, given, ok, secs) {
+    var f = F(q.k);
+    if (q.practice) {
+      if (!ok) f.wrong++;
+      S.log.push({ day: S.day, at: new Date().toTimeString().slice(0, 8), mode: "after new-fact card", q: q.a + " × " + q.b, given: given, right: q.a * q.b, ok: ok, s: Math.round(secs * 10) / 10 });
+      return false;
+    }
+    if (ok) f.correct++; else f.wrong++;
+    f.tsum += secs; f.tn++;
+    var quick = ok && (S.relaxed || secs <= goal());
+    if (mode !== "first flight") {
+      if (quick && f.days.indexOf(S.day) < 0) f.days.push(S.day);
+      if (ok && mode === "challenge") learnFact(q.k);
+      if (f.days.length >= need(q.k)) learnFact(q.k);
+      if (f.learned && f.due !== null && S.day >= f.due && f.lastReview !== S.day) {
+        f.lastReview = S.day;
+        if (quick) { f.due = S.day + GAPS[Math.min(f.step, GAPS.length - 1)]; f.step++; }
+        else if (!ok) { f.step = 0; f.due = S.day + 1; if (mastered(q.k)) f.days.pop(); } // forgotten: needs one more quick day
+        else { f.slowOk = (f.slowOk || 0) + 1; f.due = S.day + Math.min(1 + f.slowOk, 3); }
+      }
+    }
+    S.log.push({ day: S.day, at: new Date().toTimeString().slice(0, 8), mode: mode, q: q.a + " × " + q.b, given: given, right: q.a * q.b, ok: ok, s: Math.round(secs * 10) / 10 });
+    if (S.log.length > 4000) S.log.shift();
+    return quick;
+  }
+
+  // ---------- svg pieces ----------
+  // ---------- art (concept A "Blob", style rules: 6 colors, one outline, two tones, one eye, 3-5 shapes, a little tilt) ----------
+  var NAVY = "#0B1033", AW = 4;
+  var SHADE = { "#3DE0FF":"#1FB0D0", "#FF4FD8":"#C92AA8", "#B8FF3D":"#86C81C", "#FFB547":"#D9871C", "#9B7BFF":"#6E4FD6", "#FF8A5B":"#D1572C", "#5BE3A8":"#2FB07A", "#FF6B9E":"#CC3E70", "#7FB2FF":"#4A7FD6", "#C9A2FF":"#9A6FE0", "#FFD84D":"#D6AD1A", "#4DE1D2":"#1FB0A2", "#FFFFFF":"#C9CFF2", "#FF6B6B":"#C93A3A" };
+  function sh(c) { return SHADE[c] || "#000"; }
+  var AO = 'stroke="' + NAVY + '" stroke-width="' + AW + '" stroke-linejoin="round" stroke-linecap="round"';
+  function artEyes(x1, x2, y, r, mood) {
+    if (mood === "cheer") return '<path d="M' + (x1 - r) + ' ' + (y + 2) + ' Q' + x1 + ' ' + (y - r - 2) + ' ' + (x1 + r) + ' ' + (y + 2) + '" fill="none" ' + AO + '/><path d="M' + (x2 - r) + ' ' + (y + 2) + ' Q' + x2 + ' ' + (y - r - 2) + ' ' + (x2 + r) + ' ' + (y + 2) + '" fill="none" ' + AO + '/>';
+    if (mood === "sleep") return '<path d="M' + (x1 - r) + ' ' + y + ' Q' + x1 + ' ' + (y + r) + ' ' + (x1 + r) + ' ' + y + '" fill="none" ' + AO + '/><path d="M' + (x2 - r) + ' ' + y + ' Q' + x2 + ' ' + (y + r) + ' ' + (x2 + r) + ' ' + y + '" fill="none" ' + AO + '/>';
+    var dx = mood === "think" ? r * 0.35 : r * 0.2, dy = mood === "think" ? -r * 0.4 : r * 0.1, pr = r * 0.5;
+    return [x1, x2].map(function (x) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#fff" ' + AO + '/><circle cx="' + (x + dx) + '" cy="' + (y + dy) + '" r="' + pr + '" fill="' + NAVY + '"/><circle cx="' + (x + dx + pr * 0.35) + '" cy="' + (y + dy - pr * 0.4) + '" r="' + pr * 0.3 + '" fill="#fff"/>'; }).join("");
+  }
+  function artMouth(x, y, w, mood) {
+    if (mood === "cheer") return '<path d="M' + (x - w / 2) + ' ' + y + ' Q' + x + ' ' + (y + w * 0.9) + ' ' + (x + w / 2) + ' ' + y + ' Z" fill="#FF6B6B" ' + AO + '/><path d="M' + (x - w * 0.3) + ' ' + (y + w * 0.35) + ' Q' + x + ' ' + (y + w * 0.7) + ' ' + (x + w * 0.3) + ' ' + (y + w * 0.35) + '" fill="#FF4FD8" stroke="none"/>';
+    if (mood === "think") return '<path d="M' + (x - w * 0.3) + ' ' + (y + 3) + ' L' + (x + w * 0.3) + ' ' + y + '" fill="none" ' + AO + '/>';
+    if (mood === "sleep") return '<ellipse cx="' + x + '" cy="' + (y + 3) + '" rx="' + w * 0.18 + '" ry="' + w * 0.13 + '" fill="' + NAVY + '"/>';
+    return '<path d="M' + (x - w / 2) + ' ' + y + ' Q' + x + ' ' + (y + w * 0.6) + ' ' + (x + w / 2) + ' ' + y + '" fill="none" ' + AO + '/>';
+  }
+  function hatSvg(id, hx, hy, hw) {
+    var s = (hw || 88) / 80, g = '<g transform="translate(' + (hx || 60) + ' ' + (hy || 34) + ') scale(' + s + ')">', e = '</g>';
+    if (id === "party") return g + '<path d="M-16 6 L2 -34 L18 8 Z" fill="#FF4FD8" ' + AO + '/><path d="M-10 -8 L12 -10 M-5 -20 L8 -21" stroke="#FFB547" stroke-width="3" stroke-linecap="round"/><circle cx="2" cy="-34" r="6" fill="#FFB547" ' + AO + '/>' + e;
+    if (id === "crown") return g + '<path d="M-22 10 L-24 -16 L-11 -4 L0 -22 L11 -4 L24 -16 L22 10 Z" fill="#FFD84D" ' + AO + '/><circle cx="0" cy="0" r="4" fill="#FF4FD8"/>' + e;
+    if (id === "wizard") return g + '<path d="M-14 6 L14 -36 L22 6 Z" fill="#9B7BFF" ' + AO + '/><path d="M-30 8 Q0 -2 30 8 Q0 18 -30 8 Z" fill="#6E4FD6" ' + AO + '/><path d="M8 -16 l2 4 4 1 -3 3 1 4 -4 -2 -4 2 1 -4 -3 -3 4 -1z" fill="#FFD84D"/>' + e;
+    if (id === "phones") return g + '<path d="M-42 30 Q-42 -14 0 -14 Q42 -14 42 30" fill="none" stroke="' + NAVY + '" stroke-width="10"/><path d="M-42 30 Q-42 -14 0 -14 Q42 -14 42 30" fill="none" stroke="#3DE0FF" stroke-width="5"/><rect x="-50" y="22" width="16" height="26" rx="7" fill="#3DE0FF" ' + AO + '/><rect x="34" y="22" width="16" height="26" rx="7" fill="#3DE0FF" ' + AO + '/>' + e;
+    if (id === "flower") { var pet = ""; for (var i = 0; i < 5; i++) { var a = i * 72 * Math.PI / 180; pet += '<circle cx="' + (26 + 8 * Math.cos(a)).toFixed(1) + '" cy="' + (-2 + 8 * Math.sin(a)).toFixed(1) + '" r="6" fill="#FF8FE6" ' + AO + '/>'; } return g + pet + '<circle cx="26" cy="-2" r="5" fill="#FFD84D" ' + AO + '/>' + e; }
+    if (id === "helmet") return g + '<circle cx="0" cy="34" r="58" fill="#BFF6FF" fill-opacity=".14" stroke="#BFF6FF" stroke-width="3.5"/><path d="M-36 8 Q-26 -12 -6 -18" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"/>' + e;
+    return "";
+  }
+  function zib(size, mood, hat) {
+    mood = mood || "happy"; var cheer = mood === "cheer", L = "#B8FF3D";
+    var arms = cheer
+      ? '<path d="M20 70 L8 42" fill="none" ' + AO + ' stroke-width="9"/><path d="M100 70 L112 42" fill="none" ' + AO + ' stroke-width="9"/><path d="M20 70 L8 42 M100 70 L112 42" fill="none" stroke="' + L + '" stroke-width="4" stroke-linecap="round"/>'
+      : '<path d="M20 80 L10 96" fill="none" ' + AO + ' stroke-width="9"/><path d="M100 80 L110 96" fill="none" ' + AO + ' stroke-width="9"/><path d="M20 80 L10 96 M100 80 L110 96" fill="none" stroke="' + L + '" stroke-width="4" stroke-linecap="round"/>';
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 120 120" aria-hidden="true"><g transform="rotate(-3 60 70)">' + arms +
+      '<path d="M46 32 L36 10 M74 32 L84 10" fill="none" ' + AO + '/><circle cx="36" cy="10" r="7" fill="#FF4FD8" ' + AO + '/><circle cx="84" cy="10" r="7" fill="#FF4FD8" ' + AO + '/>' +
+      '<ellipse cx="60" cy="70" rx="44" ry="40" fill="' + L + '" ' + AO + '/><path d="M28 92 Q60 118 100 80 Q96 104 60 110 Q36 108 28 92 Z" fill="' + sh(L) + '"/>' +
+      artEyes(44, 76, 62, 13, mood) + '<ellipse cx="34" cy="78" rx="6" ry="3.6" fill="#FF8FE6"/><ellipse cx="86" cy="78" rx="6" ry="3.6" fill="#FF8FE6"/>' + artMouth(60, 82, 24, mood) +
+      (mood === "sleep" ? '<text x="92" y="40" font-family="Lilita One, Arial Rounded MT Bold, sans-serif" font-size="16" fill="#3DE0FF" transform="rotate(-12 92 40)">z z</text>' : "") +
+      hatSvg(hat === undefined ? (S && S.hat) : hat, 60, 34, 88) + '</g></svg>';
+  }
+  function rocket(color, w, i) {
+    i = i || 0; var fin = i % 3, win = i % 2, d = sh(color), h = Math.round(w * 60 / 44), k = AO.replace('stroke-width="4"', 'stroke-width="3"');
+    var fins = fin === 0 ? '<path d="M12 34 L2 48 L12 46 Z M32 34 L42 48 L32 46 Z" fill="' + d + '" ' + k + '/>'
+      : fin === 1 ? '<path d="M12 30 L0 44 L12 44 Z M32 30 L44 44 L32 44 Z" fill="' + d + '" ' + k + '/>'
+      : '<path d="M12 36 L4 50 L14 46 Z M32 36 L40 50 L30 46 Z" fill="' + d + '" ' + k + '/>';
+    var win2 = win ? '<circle cx="22" cy="22" r="6" fill="#fff" ' + k + '/>' : '<rect x="16" y="16" width="12" height="12" rx="4" fill="#fff" ' + k + '/>';
+    return '<svg width="' + w + '" height="' + h + '" viewBox="-2 -2 48 64" aria-hidden="true"><path d="M18 46 L22 60 L26 46 Z" fill="#FFB547" ' + k + '/>' + fins +
+      '<path d="M22 2 C34 14 36 30 32 46 H12 C8 30 10 14 22 2 Z" fill="' + color + '" ' + k + '/><path d="M27 10 C33 20 33 34 32 46 H24 C27 34 29 22 27 10 Z" fill="' + d + '"/>' + win2 + '</svg>';
+  }
+  function rocketFor(t, w) { return rocket(PCOL[t], w, ORDER.indexOf(t)); }
+  var planetUid = 0;
+  function planet(t, size, dim) {
+    var c = PCOL[t], d = sh(c), r = 40, inner = "", id = "pc" + t + "_" + (planetUid++), clip = 'clip-path="url(#' + id + ')"';
+    var base = '<defs><clipPath id="' + id + '"><circle cx="60" cy="60" r="' + r + '"/></clipPath></defs>';
+    var body = '<circle cx="60" cy="60" r="' + r + '" fill="' + c + '" ' + AO + '/><path d="M28 78 Q60 108 96 70 Q88 98 60 100 Q40 98 28 78 Z" fill="' + d + '" ' + clip + '/>';
+    var cr = function (x, y, rr) { return '<circle cx="' + x + '" cy="' + y + '" r="' + rr + '" fill="' + d + '" ' + AO + '/>'; };
+    if (t === 1) inner = cr(50, 52, 14) + '<circle cx="104" cy="30" r="7" fill="#fff" ' + AO + '/>';
+    else if (t === 2) inner = '<path d="M60 20 Q50 60 60 100 L100 100 A40 40 0 0 0 100 20 Z" fill="' + d + '" ' + clip + '/>';
+    else if (t === 10) inner = '<ellipse cx="60" cy="64" rx="60" ry="14" fill="none" stroke="' + NAVY + '" stroke-width="10" transform="rotate(-12 60 64)"/><ellipse cx="60" cy="64" rx="60" ry="14" fill="none" stroke="#FFB547" stroke-width="6" transform="rotate(-12 60 64)"/>';
+    else if (t === 5) { for (var i = 0; i < 5; i++) inner += '<rect x="10" y="' + (28 + i * 14) + '" width="100" height="6" rx="3" fill="' + d + '" ' + clip + ' transform="rotate(-8 60 60)"/>'; }
+    else if (t === 3) inner = cr(44, 48, 9) + cr(72, 42, 6) + cr(66, 74, 11);
+    else if (t === 4) inner = '<path d="M30 32 Q60 44 90 32 L84 22 Q60 14 36 22 Z" fill="#fff" ' + clip + '/><path d="M30 88 Q60 76 90 88 L84 98 Q60 106 36 98 Z" fill="#fff" ' + clip + '/>';
+    else if (t === 6) inner = '<path d="M44 60 L52 34 L68 34 L76 60 Z" fill="' + d + '" ' + AO + '/><path d="M52 34 L68 34" stroke="#FF4FD8" stroke-width="5" stroke-linecap="round"/><circle cx="62" cy="20" r="5" fill="#fff" opacity=".8"/><circle cx="72" cy="12" r="3.5" fill="#fff" opacity=".6"/>';
+    else if (t === 9) inner = '<ellipse cx="64" cy="62" rx="22" ry="14" fill="' + d + '" ' + AO + ' transform="rotate(-15 64 62)"/><ellipse cx="66" cy="60" rx="9" ry="5" fill="#FFB547" transform="rotate(-15 66 60)"/>';
+    else if (t === 8) inner = cr(40, 46, 5) + cr(62, 36, 4) + cr(80, 54, 5) + cr(48, 70, 4) + cr(70, 78, 5) + cr(30, 64, 3) + cr(90, 76, 3) + cr(60, 56, 3);
+    else if (t === 7) inner = '<path d="M20 70 L32 50 L42 64 L54 40 L66 60 L76 46 L86 62 L96 52 L102 70 Z" fill="' + d + '" ' + clip + '/><path d="M20 70 L32 50 L42 64 L54 40 L66 60 L76 46 L86 62 L96 52" fill="none" ' + AO + ' ' + clip + '/>';
+    else if (t === 11) inner = '<ellipse cx="60" cy="60" rx="56" ry="20" fill="none" stroke="' + NAVY + '" stroke-width="3" stroke-dasharray="4 6" transform="rotate(20 60 60)"/><circle cx="12" cy="42" r="7" fill="#fff" ' + AO + '/><circle cx="108" cy="78" r="7" fill="#fff" ' + AO + '/>';
+    else if (t === 12) inner = '<path d="M46 76 L52 44 L60 60 L68 36 L76 70 Z" fill="#fff" ' + AO + ' opacity=".95"/>';
+    return '<svg width="' + size + '" height="' + size + '" viewBox="-6 -6 132 132" aria-hidden="true"' + (dim ? ' style="opacity:.5;filter:grayscale(.7)"' : "") + '>' + base + body + inner + '</svg>';
+  }
+  var ICON_PAUSE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg>';
+  var ICON_BOOST = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8FF3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h10M9 7h8M7 17h8"/><path d="M17 5l4 7-4 7"/></svg>';
+  var ICON_LOCK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  var ICON_STAR = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#0B1033" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.8z"/></svg>';
+  var ICON_FLAME = '<svg width="18" height="18" viewBox="0 0 24 24" fill="#FFB547" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-8z"/></svg>';
+  var ICON_GEM = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#3DE0FF" aria-hidden="true"><path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z"/></svg>';
+  var ICON_BACK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
+
+  // Short text in the bubble; Zib may SAY more (spoken). Tap the bubble to hear it again.
+  var ICON_SPK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B1033" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg>';
+  function zibLine(mood, text, size, spoken) {
+    var sp = S && S.voice;
+    return '<div class="zibline">' + zib(size || 84, mood) + '<div class="bubble"' + (sp ? ' data-say="' + esc(spoken || text.replace(/<[^>]+>/g, "")) + '" role="button" tabindex="0" aria-label="Hear Zib again"' : "") + '>' + text + (sp ? '<span class="spk">' + ICON_SPK + '</span>' : "") + '</div></div>';
+  }
+  function keypad() {
+    return '<div class="keypad">' + ["1", "2", "3", "4", "5", "6", "7", "8", "9", "del", "0", "go"].map(function (k) {
+      if (k === "del") return '<button class="key" data-k="del" aria-label="Delete">⌫</button>';
+      if (k === "go") return '<button class="key go" data-k="go">GO</button>';
+      return '<button class="key" data-k="' + k + '">' + k + '</button>';
+    }).join("") + '</div>';
+  }
+  function answerBox(state) { return '<div class="answer' + (typed ? "" : " empty") + (state ? " " + state : "") + '" aria-label="Your answer">' + (typed || "?") + '</div>'; }
+  function gpButton() { return '<button class="iconbtn hold" id="gpbtn" aria-label="Grown-ups area: press and hold" title="Grown-ups: press and hold">' + ICON_LOCK + '</button>'; }
+  function topPills() {
+    return '<div class="row wrap"><span class="pill"><span style="width:26px;height:26px;border-radius:999px;background:var(--pink);color:var(--on-bright);display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-size:15px">' + nm().charAt(0).toUpperCase() + '</span>' + esc(rank()) + '</span>' +
+      '<span class="pill" aria-label="' + streak() + ' day streak">' + ICON_FLAME + streak() + '</span>' +
+      '<button class="pill" id="toHangar" aria-label="' + S.crystals + ' crystals, open hangar">' + ICON_GEM + S.crystals + '</button>' +
+      '<button class="pill" id="toHangar2" aria-label="' + exploredCount() + ' rockets, open hangar">' + rocket(S.ship, 13) + exploredCount() + '</button></div>';
+  }
+
+  // ---------- views ----------
+  function render() {
+    if (!ACTIVE[view]) syncDay();
+    var h = "";
+    if (view === "setup") h = vSetup();
+    else if (view === "intro") h = vIntro();
+    else if (view === "flight") h = vFlight();
+    else if (view === "parade") h = vParade();
+    else if (view === "map") h = vMap();
+    else if (view === "planet") h = vPlanet();
+    else if (view === "play") h = vPlay();
+    else if (view === "missionEnd") h = vMissionEnd();
+    else if (view === "challengeEnd") h = vChallengeEnd();
+    else if (view === "hangar") h = vHangar();
+    else if (view === "certificate") h = vCertificate();
+    else if (view === "grownups") { h = vGrownups(); refreshCode(); }
+    document.getElementById("app").innerHTML = h;
+    bindHold();
+    var bub = document.querySelector(".bubble");
+    var line = bub ? (bub.getAttribute("data-say") || bub.textContent) : "";
+    if ((view === "play" || view === "flight") && T && !T.meet && !T.show && !T.paused) {
+      var fresh = T.msg && T.msg !== T.msgSaid;
+      if (S.readQ && !T.fb) { var cq = view === "flight" ? T.qs[T.i] : curQ(); line = (fresh ? T.msg + " " : "") + cq.a + " times " + cq.b + "?"; }
+      else line = fresh ? T.msg : "";
+      T.msgSaid = T.msg;
+    }
+    if (line && line !== lastSpoken) { lastSpoken = line; say(line); }
+  }
+
+  // Beta note: grown-ups screens only (setup and the grown-ups area), never on a child screen.
+  function betaNote() { return '<p class="beta">Beta. Progress is saved in this browser only.</p>'; }
+  // ---------- save code (the only backup until accounts exist) ----------
+  // "TG1-" + base64url(gzip(JSON)) when CompressionStream exists, else "TG0-" + base64url(JSON).
+  // The answer log is cut to the last 300 answers to keep the code short (the speed goal reads the last 20).
+  function b64(bytes) { var s = ""; for (var i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  function unb64(t) { t = t.replace(/-/g, "+").replace(/_/g, "/"); while (t.length % 4) t += "="; var s = atob(t), b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return b; }
+  function gzip(bytes, pack) { return new Response(new Blob([bytes]).stream().pipeThrough(pack ? new CompressionStream("gzip") : new DecompressionStream("gzip"))).arrayBuffer().then(function (b) { return new Uint8Array(b); }); }
+  function makeCode() {
+    var c = JSON.parse(JSON.stringify(S)); c.log = (c.log || []).slice(-300); c.tdq = [];
+    var bytes = new TextEncoder().encode(JSON.stringify(c));
+    if (window.CompressionStream) return gzip(bytes, true).then(function (z) { return "TG1-" + b64(z); });
+    return Promise.resolve("TG0-" + b64(bytes));
+  }
+  function readCode(code) {
+    try {
+      var m = /^TG([01])-([A-Za-z0-9_-]+)$/.exec(String(code).replace(/\s+/g, "")); if (!m) return Promise.reject(new Error("format"));
+      var bytes = unb64(m[2]), p = m[1] === "1" ? (window.DecompressionStream ? gzip(bytes, false) : Promise.reject(new Error("gzip"))) : Promise.resolve(bytes);
+      return p.then(function (b) { var s = JSON.parse(new TextDecoder().decode(b)); if (!s || !s.facts || !s.planets) throw new Error("save"); return s; });
+    } catch (e) { return Promise.reject(e); }
+  }
+  function refreshCode() { try { makeCode().then(function (c) { gpCode = c; var box = document.getElementById("saveCode"); if (box) box.value = c; }, function () {}); } catch (e) {} }
+  function loadBox() {
+    if (gpLoad) return '<div class="col" style="gap:8px"><b>Load this save code? It replaces the progress on this device' + (gpLoad.name ? " with " + esc(gpLoad.name) + "’s progress" : "") + ' (day ' + (+gpLoad.day || 1) + ').</b>' +
+      '<div class="row wrap"><button class="gbtn danger" id="loadYes">Yes, load it</button><button class="gbtn light" id="loadNo">Cancel</button></div></div>';
+    return '<label for="loadCode">Load a save code<textarea class="copy" id="loadCode" style="height:72px" placeholder="Paste the save code here" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea></label>' +
+      '<div class="row wrap"><button class="gbtn light" id="loadAsk">Load save code</button><span class="note" id="loadMsg" role="status"></span></div>';
+  }
+  function saveCodeBox() {
+    return '<div class="box"><h3>Save code (backup)</h3><p class="note" style="margin:0">Progress lives only in this browser. Copy this code and keep it, for example in your notes or in an email to yourself. Paste it on any device to continue.</p>' +
+      '<textarea class="copy" id="saveCode" readonly aria-label="Save code" style="height:72px">' + esc(gpCode || "Making the code…") + '</textarea>' +
+      '<div class="row wrap"><button class="gbtn" id="copyCode">Copy save code</button><span class="note" id="codeMsg" role="status"></span></div>' + loadBox() + '</div>';
+  }
+  // ---------- ratings (instead of a feedback form; JG, 17 October 2026) ----------
+  // Child: three faces on the mission-complete screen, only on calendar days 2, 7 and 14, once that day (T.askRating).
+  // Grown-up: 5 stars + one optional fixed chip in the grown-ups area, until answered once (S.parentRated).
+  // Only the number, the day and the fixed chip word are sent; there is no text field anywhere.
+  var CHIPS = [["too_easy", "Too easy"], ["too_hard", "Too hard"], ["play_again", "Wants to play again"]];
+  function face(v, size) {
+    var c = v === 3 ? "#B8FF3D" : v === 2 ? "#FFB547" : "#9B7BFF";
+    var mouth = v === 3 ? '<path d="M44 76 Q60 94 76 76" fill="none" ' + AO + '/>' : v === 2 ? '<path d="M46 82 L74 80" fill="none" ' + AO + '/>' : '<path d="M44 88 Q60 72 76 88" fill="none" ' + AO + '/>';
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 120 120" aria-hidden="true"><g transform="rotate(-3 60 62)"><circle cx="60" cy="62" r="44" fill="' + c + '" ' + AO + '/>' +
+      '<path d="M26 84 Q60 116 100 72 Q96 100 60 106 Q36 104 26 84 Z" fill="' + sh(c) + '"/>' + artEyes(46, 74, 54, 10, "happy") + mouth + '</g></svg>';
+  }
+  function childRating() {
+    if (!T || !T.askRating) return "";
+    if (S.childRated && S.childRated[S.day]) return '<div class="card col rate pop" id="rateBox"><b class="display" style="font-size:24px;color:var(--lime)">Thanks!</b></div>';
+    return '<div class="card col rate" id="rateBox"><b style="font-size:18px">Did you like today?</b><div class="faces">' +
+      [[3, "I liked it"], [2, "It was OK"], [1, "I did not like it"]].map(function (f) { return '<button class="face" data-rate="' + f[0] + '" aria-label="' + f[1] + '">' + face(f[0], 64) + '</button>'; }).join("") + '</div></div>';
+  }
+  function parentRating() {
+    var h = '<div class="box" id="parentRating"><h3>How is Times Galaxy for your child?</h3>';
+    if (S.parentRated) return h + '<p class="note" style="margin:0">Thank you for your rating. It helps us make the game better.</p></div>';
+    var stars = [1, 2, 3, 4, 5].map(function (n) { var on = n <= gpStars;
+      return '<button class="star" data-stars="' + n + '" aria-label="' + n + ' star' + (n > 1 ? "s" : "") + '" aria-pressed="' + (n === gpStars) + '"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21l1.5-7L2 9.3l7-.8z" fill="' + (on ? "#FFB547" : "#E2E6FA") + '" stroke="' + (on ? "#D9871C" : "#C3C9EA") + '" stroke-width="1.5" stroke-linejoin="round"/></svg></button>'; }).join("");
+    var chips = CHIPS.map(function (c) { return '<button class="chip2' + (gpChip === c[0] ? " on" : "") + '" data-chip="' + c[0] + '" aria-pressed="' + (gpChip === c[0]) + '">' + c[1] + '</button>'; }).join("");
+    return h + '<div class="stars">' + stars + '</div><p class="note" style="margin:0">Optional: tap one that fits.</p><div class="chips">' + chips + '</div>' +
+      '<button class="gbtn" id="sendRating" style="align-self:flex-start"' + (gpStars ? "" : " disabled") + '>Send rating</button></div>';
+  }
+
+  // One-time tip for grown-ups on iPhone/iPad in the browser: Safari may clear site data after 7 days
+  // without a visit; a Home Screen web app keeps it. Shown on grown-ups screens until "OK, got it".
+  function isApple() { return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); }
+  function isInstalled() { return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true; }
+  function installHint() {
+    if (S.hintDone || !isApple() || isInstalled()) return "";
+    return '<div class="hint" role="note"><span>Tip: add Times Galaxy to the Home Screen. In Safari tap Share, then “Add to Home Screen”. Safari may delete progress after 7 days without a visit; on the Home Screen it stays.</span>' +
+      '<button class="gbtn light" id="hintOk" style="align-self:flex-start">OK, got it</button></div>';
+  }
+  function vSetup() {
+    return '<div class="row between"><h1 class="h1">Times Galaxy</h1>' + zib(64, "happy") + '</div>' +
+      '<div class="gp">' + betaNote() + installHint() + '<p class="note" style="margin:0;font-size:15px">For the grown-up: set up, then hand the device to the child.</p>' + settingsForm(true) +
+      '<button class="gbtn" id="startSetup" style="min-height:52px;font-size:18px">Start the first flight</button>' +
+      '<details class="box"><summary style="font-weight:900;cursor:pointer">Have a save code from another device?</summary>' + loadBox() + '</details></div>';
+  }
+  function settingsForm(first) {
+    var sp = S.speed;
+    return '<div class="box"><h3>Child</h3>' +
+      '<label for="f-name">First name (shown in the game)<input type="text" id="f-name" value="' + esc(S.name) + '" placeholder="Emma" maxlength="20" autocomplete="off"></label>' +
+      '<div class="grid2">' +
+      '<label for="f-speed">Fastest speed goal (adapts to the child)<select id="f-speed">' +
+      [[6, "6 s · Grade 2"], [4, "4 s · Grade 3"], [3, "3 s · Grade 4–5"], [8, "8 s · very gentle"]].map(function (o) { return '<option value="' + o[0] + '"' + (sp === o[0] ? " selected" : "") + '>' + o[1] + '</option>'; }).join("") +
+      '</select></label>' +
+      '<label for="f-max">Tables up to<select id="f-max"><option value="10"' + (S.max === 10 ? " selected" : "") + '>10 × 10 (10 planets)</option><option value="12"' + (S.max === 12 ? " selected" : "") + '>12 × 12 (12 planets)</option></select></label>' +
+      '</div>' +
+      '<label class="check" for="f-relaxed"><input type="checkbox" id="f-relaxed"' + (S.relaxed ? " checked" : "") + '> Relaxed mode (no speed goal)</label>' +
+      '<label class="check" for="f-voice"><input type="checkbox" id="f-voice"' + (S.voice ? " checked" : "") + '> Zib speaks</label>' +
+      '<label class="check" for="f-sound"><input type="checkbox" id="f-sound"' + (S.sound ? " checked" : "") + '> Sounds</label>' +
+      '<label class="check" for="f-readq"><input type="checkbox" id="f-readq"' + (S.readQ ? " checked" : "") + '> Zib reads the questions aloud (Grade 2)</label>' +
+      '<label for="f-len">Questions in the daily mission<input type="number" id="f-len" min="5" max="40" value="' + S.len + '"></label>' +
+      (first ? "" : '<p class="note" style="margin:0">Changing “tables up to” keeps progress but hides or shows planets ×11 and ×12.</p>') +
+      '</div>';
+  }
+  function vIntro() {
+    return '<div class="row between"><div class="eyebrow">First flight</div>' + gpButton() + '</div><div class="grow"></div>' +
+      '<div class="center">' + zib(190, "cheer") + '</div>' +
+      '<h1 class="h1 center" style="font-size:clamp(34px,9vw,46px)">Hi ' + nm() + '!<br>I’m Zib.</h1>' +
+      '<p class="center display" style="font-size:24px;margin:0;color:var(--cyan)">Show me what you know!</p>' +
+      '<div class="grow"></div><button class="btn" id="takeoff" style="min-height:68px;font-size:28px">TAKE OFF!</button>';
+  }
+
+  // ----- first flight -----
+  function startFlight() {
+    var seen = {}, qs = [];
+    order().forEach(function (t) { HARD[t].filter(function (b) { return b <= S.max; }).forEach(function (b) { var k = key(t, b); if (seen[k]) return; seen[k] = 1; qs.push({ k: k, a: t, b: b, t: t }); }); });
+    T = { type: "flight", qs: qs, i: 0, res: {}, done: {}, newRun: 0, stopped: false, start: 0, msg: "What’s the answer? No rush." };
+    S.planets = {}; S.parade = [];
+    typed = ""; view = "flight"; render(); T.start = performance.now();
+  }
+  function vFlight() {
+    var q = T.qs[T.i];
+    var strip = '<div class="strip' + (S.max === 10 ? " ten" : "") + '">' + order().map(function (t) {
+      var st = T.done[t]; return '<div class="' + (st === "known" ? "known" : st === "new" ? "new" : (q && q.t === t ? "asking" : "")) + '">×' + t + '</div>'; }).join("") + '</div>';
+    return '<div class="row between"><div class="eyebrow">First flight</div></div>' + strip +
+      zibLine("happy", T.msg || "What’s the answer? No rush.", 70) +
+      '<div class="qcard"><div class="q">' + q.a + ' × ' + q.b + '</div>' + answerBox(T.fb) + '<div class="feedback">' + (T.fbHtml || "") + '</div></div>' +
+      '<button class="btn secondary small" id="dunno" style="align-self:center">I don’t know this one yet</button><div class="grow"></div>' + keypad();
+  }
+  function flightAnswer(given) {
+    var q = T.qs[T.i], secs = (performance.now() - T.start) / 1000, ok = given !== null && +given === q.a * q.b;
+    record("first flight", q, given === null ? "skip" : given, ok, secs);
+    T.res[q.k] = ok; T.fb = ok ? "ok" : "bad"; T.msg = ok ? pick(LINES_OK) + " Next one." : "No problem. Next one!";
+    T.fbHtml = ok ? '<span class="chip ok">Got it!</span>' : '<span class="chip ok">No problem, we’ll learn it together.</span>';
+    if (ok) sfx("ok");
+    order().forEach(function (t) {
+      if (T.done[t] || T.stopped) return;
+      var ks = HARD[t].filter(function (b) { return b <= S.max; }).map(function (b) { return key(t, b); });
+      if (!ks.every(function (k) { return k in T.res; })) return;
+      var known = ks.every(function (k) { return T.res[k]; });
+      T.done[t] = known ? "known" : "new";
+      if (known) {
+        S.planets[t] = "explored"; S.parade.push(t);
+        // the flight only checked facts up to ×9, so only facts up to ×10 count as known
+        for (var a = 1; a <= Math.min(10, S.max); a++) { var kk = key(t, a); learnFact(kk, easy(kk) ? 2 + Math.floor(Math.random() * 4) : 1); }
+        T.newRun = 0; sfx("boost", 2);
+      } else { T.newRun++; if (T.newRun >= 3) T.stopped = true; }
+    });
+    save(); busy = true; render();
+    setTimeout(function () {
+      busy = false; typed = ""; T.fb = null; T.fbHtml = ""; T.i++;
+      if (T.stopped || T.i >= T.qs.length) return finishFlight();
+      render(); T.start = performance.now();
+    }, ok ? 650 : 1100);
+  }
+  function finishFlight() {
+    order().forEach(function (t) { if (!S.planets[t]) S.planets[t] = "locked"; });
+    S.flightDone = true; S.flightDay = S.day; S.crystals += 10 * S.parade.length; markPlayed(); save(); T = null; view = "parade"; render();
+    if (S.parade.length) { sfx("win"); confetti(); }
+    say(S.parade.length ? "Rocket parade! You already know " + S.parade.length + " planets!" : "Great flight! Let's explore together!");
+  }
+  function vParade() {
+    var n = S.parade.length;
+    var rockets = S.parade.map(function (t, i) { return '<div style="animation-delay:' + (i * 0.25) + 's">' + rocketFor(t, 46) + '×' + t + '</div>'; }).join("");
+    return '<div class="row between"><div class="eyebrow" style="color:var(--lime)">' + (n ? "Rocket parade!" : "Flight complete") + '</div>' + gpButton() + '</div><div class="grow"></div>' +
+      '<div class="center">' + zib(140, "cheer") + '</div>' +
+      (n ? '<h1 class="h1 center">You already know ' + n + ' planet' + (n > 1 ? "s" : "") + '!</h1><div class="parade">' + rockets + '</div><p class="center display" style="font-size:22px;margin:0;color:var(--cyan)">' + n + ' rocket' + (n > 1 ? "s" : "") + ' for your hangar · +' + 10 * n + ' crystals</p>'
+        : '<h1 class="h1 center">Great flight, ' + nm() + '!</h1><p class="center display" style="font-size:22px;margin:0;color:var(--cyan)">Let’s explore the galaxy together.</p>') +
+      '<div class="grow"></div><button class="btn" id="toMap" style="min-height:68px;font-size:26px">TO THE GALAXY!</button>';
+  }
+
+  // ----- map -----
+  var MAPPOS = [[70,480],[180,440],[290,395],[200,330],[110,255],[230,190],[320,140],[210,95],[90,120],[40,40],[160,20],[290,30]];
+  function vMap() {
+    var o = order(), cur = current(), d = S.day;
+    var pts = o.map(function (t, i) { return MAPPOS[i][0] + "," + MAPPOS[i][1]; }).join(" ");
+    var curIdx = cur ? o.indexOf(cur) : o.length - 1;
+    var donePts = o.slice(0, curIdx + 1).map(function (t, i) { return MAPPOS[i][0] + "," + MAPPOS[i][1]; }).join(" ");
+    var planets = o.map(function (t, i) {
+      var st = pstat(t), isCur = t === cur, col = PCOL[t], size = isCur ? 92 : (st === "explored" ? 66 : 50);
+      var x = MAPPOS[i][0] / 354 * 100, y = MAPPOS[i][1] / 520 * 100;
+      var style = "position:absolute;left:calc(" + x + "% - " + size / 2 + "px);top:calc(" + y + "% - " + size / 2 + "px);width:" + size + "px;height:" + size + "px;";
+      var label, badge = "", num = '<span style="position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);background:' + NAVY + ';color:#fff;border-radius:999px;padding:1px 8px;font-size:' + (isCur ? 18 : 14) + 'px;line-height:1.3;border:2px solid ' + (isCur ? "#fff" : col) + '">×' + t + '</span>';
+      var inner;
+      if (isCur) { inner = planet(t, size) + num; label = "Planet ×" + t + ", you are here"; }
+      else if (st === "explored") { inner = planet(t, size) + num; label = "Planet ×" + t + ", explored";
+        badge = gold(t) ? '<span class="gold">' + ICON_STAR + '</span>' : '<span class="rbadge">' + rocketFor(t, 12) + '</span>'; }
+      else { inner = planet(t, size, true) + '<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#A9B3E8;font-size:16px">×' + t + '</span>'; label = "Planet ×" + t + ", not yet"; }
+      return '<button class="mplanet' + (isCur ? " pulse" : "") + '" data-planet="' + t + '" aria-label="' + label + '"' + (st === "explored" || isCur ? "" : " disabled") + ' style="' + style + 'background:none;' + (isCur ? "filter:drop-shadow(0 0 14px " + col + ");" : "") + '">' + inner + badge + '</button>';
+    }).join("");
+    var ship = "";
+    if (cur) { var sx = MAPPOS[curIdx][0] / 354 * 100, sy = MAPPOS[curIdx][1] / 520 * 100; var flip = sx > 75; // planets at the right edge: the rocket flies on their left, so it never leaves the screen
+      ship = '<div style="position:absolute;left:calc(' + sx + '% ' + (flip ? "- 72px" : "+ 34px") + ');top:calc(' + sy + '% - 58px);transform:rotate(' + (flip ? -28 : 28) + 'deg);pointer-events:none">' + rocket(S.ship, 34) + '</div>'; }
+    var line, mood = "happy", btn = "", due = dueFacts().length;
+    var ready = cur && challengeReady(cur);
+    if (!cur && S.mainDone[d]) { var bo = bonusOk(); line = bo ? "Patrol done! Your planets shine." : "Great flying, " + nm() + "! See you tomorrow."; mood = bo ? "cheer" : "sleep";
+      btn = (bo ? '<button class="btn secondary" id="goBonus" style="min-height:56px;font-size:20px">Bonus patrol · ' + BONUS_LEN + ' questions</button>' : "") + '<button class="btn amber small" id="toCert" style="width:100%">My certificate</button>'; }
+    else if (!cur) { line = "Galaxy explored! Patrol keeps planets gold."; mood = "cheer"; btn = '<button class="btn" id="goLaunch" style="min-height:68px;font-size:26px">START PATROL</button><button class="btn amber small" id="toCert" style="width:100%">My certificate</button>'; }
+    else if (ready && canChallengeToday()) { line = "Planet ×" + cur + " challenge is ready!"; btn = '<button class="btn amber" id="goChallenge" style="min-height:68px;font-size:26px">CHALLENGE ×' + cur + '</button>'; }
+    else if (!S.mainDone[d]) {
+      line = S.challengeDay[d] ? "Quick look at planet ×" + cur + "?" : due ? "Planet ×" + cur + " and " + Math.min(due, 8) + " review" + (due > 1 ? "s" : "") + ". Ready?" : "Next stop: planet ×" + cur + "! Ready?";
+      btn = '<button class="btn" id="goLaunch" style="min-height:68px;font-size:26px">LAUNCH TO ×' + cur + '</button>';
+    } else if (bonusOk()) { line = ready ? "Challenge ×" + cur + " tomorrow! Quick bonus now?" : "Mission done! Quick bonus?"; mood = "cheer"; btn = '<button class="btn secondary" id="goBonus" style="min-height:60px;font-size:22px">Bonus mission · ' + BONUS_LEN + ' questions</button>'; }
+    else { line = ready && !S.challengeDay[d] ? "Challenge ×" + cur + " tomorrow! Sleep well, " + nm() + "." : "Great flying, " + nm() + "! See you tomorrow."; mood = "sleep"; }
+    return '<div class="row between">' + topPills() + gpButton() + '</div>' +
+      '<div><div class="display" style="font-size:32px">Times Galaxy</div><div class="muted" style="font-weight:800">' + exploredCount() + ' of ' + o.length + ' planets explored</div></div>' +
+      '<div class="galaxy"><svg viewBox="0 0 354 520" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="#3A4590" stroke-width="3" stroke-dasharray="6 8" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
+      '<polyline points="' + donePts + '" fill="none" stroke="#3DE0FF" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>' + planets + ship + '</div>' +
+      zibLine(mood, line, 80) + btn;
+  }
+
+  // ----- planet page -----
+  function vPlanet() {
+    var t = openPlanet, st = pstat(t), pf = planetFacts(t), nl = pf.filter(learned).length, nmst = pf.filter(mastered).length;
+    var grid = pf.map(function (k) {
+      var p = parts(k), other = p[0] === t ? p[1] : p[0], m = mastered(k), l = learned(k);
+      return '<div style="min-height:46px;border-radius:12px;background:' + (m ? "var(--amber)" : l ? "var(--cyan)" : "transparent") + ';border:' + (m || l ? "0" : "2px dashed var(--violet)") + ';color:' + (m || l ? "var(--on-bright)" : "#E5DCFF") + ';display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:18px">' + t + ' × ' + other + '</div>';
+    }).join("");
+    var actions = "";
+    if (st !== "explored") {
+      if (challengeReady(t) && canChallengeToday()) { var miss = S.miss && S.miss[t] && S.miss[t].length; actions = '<button class="btn amber" id="startChallenge">' + (miss ? "Finish the challenge (" + miss + " left)" : "Planet challenge") + '</button>'; }
+      else if (!S.mainDone[S.day]) actions = '<button class="btn" id="goLaunch">Launch today’s mission</button>';
+      else if (challengeReady(t)) actions = '<p class="center display" style="font-size:22px;margin:0;color:var(--amber)">Challenge tomorrow!</p>';
+    }
+    return '<div class="row between"><div class="row"><button class="iconbtn" id="backMap" aria-label="Back to the galaxy map">' + ICON_BACK + '</button>' +
+      '<div><div class="eyebrow" style="color:#C9B8FF">Planet ' + (order().indexOf(t) + 1) + ' of ' + order().length + '</div><div class="display" style="font-size:34px">Planet ×' + t + '</div></div></div>' + gpButton() + '</div>' +
+      '<div class="center">' + planet(t, 110) + '</div>' +
+      zibLine("happy", "Trick: " + esc(TIPS[t]), 72) +
+      '<div class="card col"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">' + grid + '</div></div>' +
+      '<div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><b style="color:var(--cyan)">' + nl + ' / ' + pf.length + '</b><span>learned</span></div><div class="stat"><b style="color:var(--amber)">' + nmst + ' / ' + pf.length + '</b><span>gold' + (S.relaxed ? " (relaxed)" : "") + '</span></div></div>' +
+      '<div class="grow"></div>' + actions;
+  }
+
+  // ----- missions -----
+  function buildMission(kind) {
+    var t = current(), len = kind === "bonus" ? BONUS_LEN : mainLen();
+    var pf = t ? planetFacts(t) : [];
+    var prio = function (k) { var f = F(k); return (easy(k) ? 0 : 3) - (mastered(k) ? 2 : 0) + Math.min(f.wrong, 3) + Math.min(S.day - f.due, 4) * 0.5; };
+    var reviews = shuffle(dueFacts().filter(function (k) { return pf.indexOf(k) < 0; })).sort(function (a, b) { return prio(b) - prio(a); });
+    var allPlanetLearned = pf.every(learned);
+    var cap = !t ? len : kind === "bonus" ? Math.ceil(len / 2) : allPlanetLearned ? Math.round(len * 0.6) : Math.round(len * 0.4);
+    reviews = reviews.slice(0, cap);
+    if (!t && reviews.length < len) { // patrol: top up with the weakest learned facts
+      var extra = allFacts().filter(function (k) { return learned(k) && reviews.indexOf(k) < 0; }).sort(function (a, b) { return F(a).days.length - F(b).days.length; });
+      reviews = reviews.concat(extra.slice(0, len - reviews.length));
+    }
+    if (!t) { var pi = shuffle(reviews.map(function (k) { var q = orient(k); q.review = homePlanet(k); return q; })); return pi; }
+
+    // 1. New facts are PLANNED: at most S.newCap per mission (3 to start), easiest first, never in a bonus.
+    //    Each one: new-fact card + practice answer at slot 1, 1+gap, …; its real question 5 slots later.
+    var other = function (k) { var p = parts(k); return p[0] === t ? p[1] : p[0]; };
+    var unmet = pf.filter(function (k) { var f = F(k); return !learned(k) && !f.met && f.correct === 0; }).sort(function (a, b) { return other(a) - other(b); });
+    var nNew = kind === "bonus" ? 0 : Math.min(unmet.length, S.newCap || NEW_MIN);
+    while (nNew > 0 && 1 + (nNew - 1) * 3 + 5 > len - 1) nNew--;   // at least 2 normal questions between new-fact cards
+    var gap = nNew > 1 ? Math.max(3, Math.min(4, Math.floor((len - 7) / (nNew - 1)))) : 0;
+    var slots = new Array(len), i;
+    for (i = 0; i < nNew; i++) {
+      var meet = orient(unmet[i], t); meet.isNew = true; meet.review = false; slots[1 + i * gap] = meet;
+      var real = orient(unmet[i], t); real.review = false; real.realOf = true; slots[6 + i * gap] = real;
+    }
+    // 2. Reviews (spaced) and planet practice fill the other slots. Planet practice slots can later be
+    //    swapped for a retry of a wrong answer, so the mission never gets longer than shown.
+    var free = len - nNew * 2;
+    reviews = reviews.slice(0, Math.max(0, Math.min(reviews.length, free - 2)));
+    var met = pf.filter(function (k) { var f = F(k); return !learned(k) && (f.met || f.correct > 0) && unmet.slice(0, nNew).indexOf(k) < 0; });
+    var prac = pf.filter(function (k) { return learned(k) && !mastered(k); });
+    var pool = met.concat(met, prac);
+    if (!pool.length) pool = pf.filter(learned);
+    if (!pool.length) pool = pf.slice();
+    var fill = [];
+    while (fill.length < free - reviews.length) fill = fill.concat(shuffle(pool.slice()));
+    fill = fill.slice(0, free - reviews.length).map(function (k) { var q = orient(k, t); q.review = false; q.filler = true; return q; });
+    var rest = shuffle(reviews.map(function (k) { var q = orient(k); q.review = homePlanet(k); return q; }).concat(fill));
+    // warm-up: start with something the child has seen before (a review or planet practice)
+    for (i = 0; i < len; i++) if (!slots[i]) slots[i] = rest.shift();
+    // one extra look at each new fact near the end (third exposure), on a practice slot after its real question
+    for (i = 0; i < nNew; i++) for (var j = Math.min(len - 1, 6 + i * gap + 4); j < len; j++) if (slots[j] && slots[j].filler) { var x = orient(unmet[i], t); x.review = false; slots[j] = x; break; }
+    // avoid the same fact twice in a row (swap only free slots)
+    for (i = 1; i < len; i++) if (slots[i].k === slots[i - 1].k && !slots[i].isNew && !slots[i].realOf) {
+      for (j = i + 1; j < len; j++) if (!slots[j].isNew && !slots[j].realOf && slots[j].k !== slots[i].k && slots[j].k !== slots[i - 1].k) { var y = slots[i]; slots[i] = slots[j]; slots[j] = y; break; }
+    }
+    return slots;
+  }
+  function startMission(kind) {
+    var t = current();
+    T = { type: "mission", kind: kind, planet: t, qs: buildMission(kind), i: 0, combo: 0, best: 0, boosts: 0, right: 0, answered: 0, rightFacts: [], requeued: {}, introduced: [], realRes: {}, start: 0,
+      msg: kind === "bonus" ? "Bonus mission! Quick one." : t ? "Planet ×" + t + "! Let’s go, " + nm() + "!" : "Patrol time!" };
+    typed = ""; view = "play"; checkMeet(); render(); sfx("launch"); T.start = performance.now();
+  }
+  function startChallenge(t) {
+    var keys = (S.miss && S.miss[t] && S.miss[t].length) ? S.miss[t].slice() : planetFacts(t);
+    T = { type: "challenge", planet: t, items: shuffle(keys.map(function (k) { return { q: orient(k, t), tries: 0 }; })), i: 0, nFacts: keys.length, missing: [], shaky: [], n: 0, right: 0, start: 0, msg: "The whole ×" + t + " table. No timer!" };
+    typed = ""; view = "play"; render(); T.start = performance.now();
+  }
+  function curQ() { return T.type === "mission" ? T.qs[T.i] : T.items[T.i].q; }
+  function vPlay() {
+    // the counter never grows: a mission keeps its planned length, a challenge counts facts (second tries happen on the last dot)
+    var isM = T.type === "mission", total = isM ? T.qs.length : T.nFacts, at = isM ? T.i : Math.min(T.i, T.nFacts - 1), q = curQ();
+    var shown = Math.min(total, 30), dots = '<div class="dots" style="grid-template-columns:repeat(' + shown + ',minmax(0,1fr))">';
+    for (var d = 0; d < shown; d++) { var pos = Math.floor(d * total / shown); dots += '<span class="' + (pos < at ? "done" : pos === at ? "now" : "") + '"></span>'; }
+    dots += '</div>';
+    var head = '<div class="row"><button class="iconbtn" id="quit" aria-label="Stop and go back">' + ICON_PAUSE + '</button>' + dots + '<span class="muted" style="font-weight:900">' + Math.min(at + 1, total) + '/' + total + '</span></div>';
+    var tag = isM ? (q.review ? '<span class="chip review">Review · from planet ×' + q.review + '</span>' : (T.combo >= 2 ? '<span class="chip combo">Combo ×' + T.combo + '</span>' : ""))
+      : '<span class="muted" style="font-weight:800">' + (T.i >= T.nFacts ? "Second try" : "No timer") + '</span>';
+    var label = '<div class="row between" style="min-height:32px"><span class="eyebrow"' + (isM ? "" : ' style="color:var(--amber)"') + '>' + (isM ? (T.kind === "bonus" ? "Bonus" : T.planet ? "Mission · ×" + T.planet : "Patrol") : "Planet challenge · ×" + T.planet) + '</span>' + tag + '</div>';
+    if (T.paused) return head + '<div class="grow"></div><div class="card col center pop" style="align-items:center">' + zib(120, "sleep") + '<div class="display" style="font-size:34px">Paused</div><p class="muted" style="margin:0;font-weight:700">Take a break. Your mission waits for you.</p>' +
+      '<button class="btn" id="resume" style="width:100%">Continue</button><button class="btn secondary small" id="stopMission" style="width:100%">Stop for today</button></div><div class="grow"></div>';
+    if (T.meet) {
+      var m = T.meet, ht = howTo(m.k);
+      return head + label + '<div class="card col meet pop">' + '<div class="eyebrow" style="color:var(--cyan)">New fact</div>' +
+        dotPicture(m.k) +
+        '<div class="display" style="font-size:48px">' + m.a + ' × ' + m.b + ' = <span style="color:var(--amber)">' + m.a * m.b + '</span></div>' +
+        '<div class="howto" style="font-size:22px;color:var(--ink)">' + ht + '</div></div>' +
+        zibLine("happy", "New fact!", 64, "New fact! " + m.a + " times " + m.b + " is " + m.a * m.b + ". " + ht + ".") +
+        '<div class="grow"></div><button class="btn" id="meetGo" style="min-height:64px">Got it! Let me try</button>';
+    }
+    var overlay = T.show ? '<div class="card col pop" style="border-color:var(--amber)"><div class="row">' + zib(64, "think") + '<div><div style="font-weight:900;font-size:18px">' + T.show.a + ' × ' + T.show.b + ' = <span class="display" style="font-size:32px;color:var(--amber)">' + T.show.a * T.show.b + '</span></div><div class="howto">' + howTo(key(T.show.a, T.show.b), T.planet) + '</div><div class="muted" style="font-weight:700">' + T.show.note + '</div></div></div><button class="btn amber small" id="gotit" style="width:100%">Got it</button></div>' : "";
+    return head + label + (overlay ? "" : zibLine(T.mood || "happy", T.msg || "", 64)) +
+      '<div class="qcard"><div class="q">' + q.a + ' × ' + q.b + '</div>' + answerBox(T.fb) + '<div class="feedback">' + (T.fbHtml || "") + '</div></div>' +
+      overlay + '<div class="grow"></div>' + (overlay ? "" : keypad());
+  }
+  function playAnswer(given) {
+    var isM = T.type === "mission", q = curQ(), secs = (performance.now() - T.start) / 1000, ok = +given === q.a * q.b;
+    var quick = record(isM ? (T.kind === "bonus" ? "bonus" : q.review ? "review" : "mission") : "challenge", q, given, ok, secs);
+    if (isM) {
+      if (!q.practice) T.answered++; T.elapsed = (T.elapsed || 0) + Math.min(secs, 30);
+      if (!q.practice && T.introduced.indexOf(q.k) >= 0 && !(q.k in T.realRes)) T.realRes[q.k] = ok;
+      if (ok) {
+        if (!q.practice) { T.right++; T.combo++; T.best = Math.max(T.best, T.combo); } S.crystals += 1;
+        if (!q.practice && T.rightFacts.indexOf(q.k) < 0) T.rightFacts.push(q.k);
+        var boost = quick && !S.relaxed;
+        if (boost) { T.boosts++; S.crystals += 1; sfx("boost", T.combo); } else sfx("ok");
+        T.fb = "ok"; T.fbHtml = boost ? '<span class="chip boost">' + ICON_BOOST + ' Rocket boost!</span>' : '<span class="chip ok">' + ICON_GEM + ' Correct! +1 crystal</span>';
+        T.mood = T.combo >= 3 ? "cheer" : "happy";
+        T.msg = T.combo >= 5 ? "On fire! " + T.combo + " in a row!" : T.combo >= 3 ? T.combo + " in a row! Keep going!" : q.review ? "Still remember it! " + pick(LINES_OK) : pick(LINES_OK);
+        save(); busy = true; render(); setTimeout(function () { busy = false; nextPlay(); }, 700);
+      } else {
+        T.combo = 0; T.fb = "bad"; T.fbHtml = ""; sfx("wrong"); T.mood = "happy"; T.msg = pick(["Let’s try the next one!", "You can do this one!", "Next one, pilot!"]);
+        // the fact comes back about 4 questions later IN PLACE OF a planet-practice question: the mission length never grows
+        if (!q.practice && !T.requeued[q.k]) for (var rj = T.i + 4; rj < T.qs.length; rj++) { var sq = T.qs[rj]; if (sq.filler && sq.k !== q.k) { T.requeued[q.k] = 1; var again = orient(q.k, T.planet); again.review = q.review; T.qs[rj] = again; break; } }
+        T.show = { a: q.a, b: q.b, note: pick(["Tricky one! We’ll see it again soon.", "Let’s remember this one. It comes back soon.", "No worries. Try it again in a bit!"]) };
+        save(); render(); say(q.a + " times " + q.b + " is " + q.a * q.b + ". " + howTo(q.k, T.planet));
+      }
+    } else {
+      var it = T.items[T.i]; T.n++;
+      if (ok) {
+        // right only after Zib showed the answer = probably copied: the planet still counts, but the fact is reviewed tomorrow
+        if (it.tries >= 2 && T.shaky.indexOf(it.q.k) < 0) T.shaky.push(it.q.k);
+        T.right++; S.crystals += 1; T.fb = "ok"; T.fbHtml = '<span class="chip ok">Correct!</span>'; sfx("ok");
+        T.mood = "happy"; T.msg = pick(LINES_OK);
+        save(); busy = true; render(); setTimeout(function () { busy = false; nextPlay(); }, 650);
+      } else {
+        it.tries++; T.fb = "bad"; T.fbHtml = ""; sfx("wrong");
+        if (it.tries === 1) { T.items.push(it); T.msg = "Not quite. You get a second try at the end!"; save(); busy = true; render(); setTimeout(function () { busy = false; nextPlay(); }, 1100); }
+        else if (it.tries === 2) { T.items.push(it); T.show = { a: q.a, b: q.b, note: "Remember it. It comes back once more at the end." }; save(); render(); say(q.a + " times " + q.b + " is " + q.a * q.b + ". " + howTo(q.k, T.planet)); }
+        else { T.missing.push(it.q.k); T.show = { a: q.a, b: q.b, note: "We’ll practise this one. You can finish later." }; save(); render(); say(q.a + " times " + q.b + " is " + q.a * q.b + ". " + howTo(q.k, T.planet) + ". We'll practise it."); }
+      }
+    }
+  }
+  function gotIt() { T.show = null; nextPlay(); }
+  function checkMeet() {
+    T.meet = null;
+    if (T.type !== "mission") return;
+    var q = curQ(); if (q.review) return;
+    var f = F(q.k); if (q.isNew && !f.met && !learned(q.k)) T.meet = q;
+  }
+  function nextPlay() {
+    typed = ""; T.fb = null; T.fbHtml = ""; T.i++;
+    var total = T.type === "mission" ? T.qs.length : T.items.length;
+    if (T.i >= total) return T.type === "mission" ? endMission() : endChallenge();
+    if (T.type === "mission" && T.kind !== "bonus" && T.elapsed > 300 && T.i >= 10) return endMission();
+    checkMeet(); render(); T.start = performance.now();
+  }
+  function endMission() {
+    if (T.kind === "bonus") S.bonusDone[S.day] = true; else S.mainDone[S.day] = true;
+    // new facts per mission adapt: all new facts right on the real question → one more next time; any wrong → back down
+    var intro = T.introduced, res = intro.filter(function (k) { return k in T.realRes; });
+    if (T.kind !== "bonus" && res.length) {
+      if (res.some(function (k) { return !T.realRes[k]; })) S.newCap = Math.max(NEW_MIN, (S.newCap || NEW_MIN) - 1);
+      else if (res.length === intro.length && intro.length >= (S.newCap || NEW_MIN)) S.newCap = Math.min(NEW_MAX, (S.newCap || NEW_MIN) + 1);
+    }
+    S.crystals += 10; markPlayed(); save(); view = "missionEnd"; render(); sfx("win"); confetti();
+    say("Mission complete! " + streak() + " day streak!");
+  }
+  function weekRow() {
+    var h = '<div class="week">';
+    for (var d = S.day - 6; d <= S.day; d++) { var on = d >= 1 && S.played.indexOf(d) >= 0; h += '<div><i class="' + (on ? "on" : "") + '">' + (on ? ICON_STAR : "") + '</i>' + (d === S.day ? "Today" : d >= 1 ? "Day " + d : "") + '</div>'; }
+    return h + '</div>';
+  }
+  function vMissionEnd() {
+    var t = T.planet, chips = T.rightFacts.slice(0, 8).map(function (k) { var p = parts(k); return "<span>" + p[0] + " × " + p[1] + "</span>"; }).join("");
+    var nr = nextRank(), progress = "";
+    if (t) { var pf = planetFacts(t), done = pf.filter(function (k) { return learned(k) || F(k).correct > 0; }).length;
+      progress = '<div class="card col"><b>Planet ×' + t + ': ' + done + ' of ' + pf.length + ' facts ready</b><div class="bar"><i style="width:' + Math.round(done / pf.length * 100) + '%;background:var(--pink)"></i></div>' +
+        (challengeReady(t) ? '<b style="color:var(--amber)">All ready! Challenge tomorrow.</b>' : "") + '</div>'; }
+    var g = nextGoal(), goalHtml = "";
+    if (g) goalHtml = g.price <= S.crystals
+      ? '<button class="card goal" id="toHangar" style="color:inherit;text-align:left;border-color:var(--cyan)">' + (g.kind === "hat" ? zib(44, "happy", g.id) : rocket(g.id, 26)) + '<b style="flex:1">You can get the ' + esc(g.name) + '!</b><span class="pill">' + ICON_GEM + S.crystals + '</span></button>'
+      : '<div class="card goal">' + (g.kind === "hat" ? zib(44, "happy", g.id) : rocket(g.id, 26)) + '<div class="col" style="flex:1;gap:6px"><b>' + (g.price - S.crystals) + ' more for the ' + esc(g.name) + '</b><div class="bar"><i style="width:' + Math.round(S.crystals / g.price * 100) + '%"></i></div></div></div>';
+    return '<div class="row between"><div class="eyebrow" style="color:var(--lime)">' + (T.kind === "bonus" ? "Bonus complete" : "Mission complete") + '</div>' + gpButton() + '</div>' +
+      '<div class="center">' + zib(120, "cheer") + '</div>' +
+      '<h1 class="h1 center">Great work, ' + nm() + '!</h1>' +
+      '<div class="stats"><div class="stat"><b>' + T.right + '/' + T.answered + '</b><span>correct</span></div><div class="stat"><b style="color:var(--pink)">×' + T.best + '</b><span>best combo</span></div>' + (S.relaxed || T.boosts <= 1 ? '<div class="stat"><b style="color:var(--amber)">' + T.rightFacts.length + '</b><span>facts you knew</span></div></div>' : '<div class="stat"><b style="color:var(--lime)">' + T.boosts + '</b><span>rocket boosts</span></div></div>') +
+      childRating() + progress + goalHtml +
+      '<div class="card col"><div class="row between"><b>' + ICON_FLAME + ' ' + streak() + ' day streak</b>' + (nr ? '<span class="muted" style="font-weight:800">' + nr[1] + ' planet' + (nr[1] > 1 ? "s" : "") + ' to ' + nr[0] + '</span>' : "") + '</div>' + weekRow() + '</div>' +
+      '<div class="grow"></div><button class="btn" id="toMap">Back to the galaxy</button>';
+  }
+  function endChallenge() {
+    var t = T.planet; S.miss = S.miss || {};
+    if (!T.missing.length) {
+      S.planets[t] = "explored"; S.miss[t] = []; S.crystals += 20;
+      planetFacts(t).forEach(learnFact);
+      T.shaky.forEach(function (k) { var f = F(k); f.due = S.day + 1; f.step = 0; });
+      T.passed = true;
+      if (!current() && !S.galaxyDone) { S.galaxyDone = S.day; S.crystals += 100; T.galaxy = true; }
+    } else { S.miss[t] = T.missing.slice(); T.passed = false; }
+    S.challengeDay[S.day] = true; S.challengeAns[S.day] = (S.challengeAns[S.day] || 0) + T.n;
+    markPlayed(); save(); view = "challengeEnd"; render();
+    if (T.galaxy) { sfx("launch"); setTimeout(function () { sfx("win"); confetti(); }, 900); setTimeout(function () { if (view === "challengeEnd") { sfx("win"); confetti(); } }, 2600); say("You explored the whole galaxy! You know all the times tables, " + (S.name || "pilot") + "!"); }
+    else if (T.passed) { sfx("launch"); setTimeout(function () { sfx("win"); confetti(); }, 900); say("Planet " + t + " explored! A new rocket is yours!"); }
+    else say("Almost! We'll practise the last ones and you can finish later.");
+  }
+  function vChallengeEnd() {
+    var t = T.planet;
+    if (T.galaxy) {
+      var all = order().map(function (p, i) { return '<div style="animation-delay:' + (i * 0.1) + 's;font-size:14px">' + rocketFor(p, 24) + '×' + p + '</div>'; }).join("");
+      return '<div class="row between"><div class="eyebrow" style="color:var(--amber)">Galaxy explored</div>' + gpButton() + '</div><div class="grow"></div>' +
+        '<div class="center">' + zib(150, "cheer") + '</div>' +
+        '<h1 class="h1 center" style="font-size:clamp(38px,10vw,54px);color:var(--amber);text-shadow:0 0 24px #FFB54788">GALAXY EXPLORED!</h1>' +
+        '<p class="center display" style="font-size:22px;margin:0">You know all ' + order().length + ' times tables, ' + nm() + '!</p>' +
+        '<div class="parade" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px">' + all + '</div>' +
+        '<p class="center display" style="font-size:20px;margin:0;color:var(--cyan)">Rank: ' + esc(rank()) + ' · +100 crystals</p>' +
+        '<div class="grow"></div><button class="btn amber" id="toCert" style="min-height:64px;font-size:24px">See my certificate</button>';
+    }
+    if (T.passed) {
+      var nr = nextRank();
+      return '<div class="row between"><div class="eyebrow" style="color:var(--lime)">Planet explored</div>' + gpButton() + '</div><div class="grow"></div>' +
+        '<div class="center" style="position:relative;height:200px"><div style="position:absolute;left:50%;top:70px;transform:translateX(-50%)">' + planet(t, 150) + '</div><div class="launch" style="position:absolute;left:50%;top:0;transform:translateX(-50%)">' + rocketFor(t, 90) + '</div></div>' +
+        '<h1 class="h1 center" style="font-size:clamp(34px,9vw,44px)">Planet ×' + t + ' explored!</h1>' +
+        '<p class="center display" style="font-size:22px;margin:0;color:var(--cyan)">New rocket · +20 crystals · Rank: ' + esc(rank()) + '</p>' +
+        (nr ? '<p class="center muted" style="margin:0;font-weight:800">' + nr[1] + ' more planet' + (nr[1] > 1 ? "s" : "") + ' to ' + nr[0] + '</p>' : "") +
+        '<div class="center">' + zib(110, "cheer") + '</div><div class="grow"></div><button class="btn" id="toMap">Back to the galaxy</button>';
+    }
+    return '<div class="row between"><div class="eyebrow" style="color:var(--amber)">Almost there</div>' + gpButton() + '</div><div class="grow"></div>' +
+      '<div class="center">' + zib(130, "happy") + '</div>' +
+      '<h1 class="h1 center">Almost! ' + T.missing.length + ' fact' + (T.missing.length > 1 ? "s" : "") + ' to go.</h1>' +
+      '<p class="center" style="font-size:18px;font-weight:700;color:var(--soft);margin:0">Next time you only finish these.</p>' +
+      '<div class="factchips" style="justify-content:center">' + T.missing.map(function (k) { var p = parts(k); return "<span>" + p[0] + " × " + p[1] + "</span>"; }).join("") + '</div>' +
+      '<div class="grow"></div><button class="btn" id="toMap">Back to the galaxy</button>';
+  }
+
+  // ----- certificate -----
+  function vCertificate() {
+    var total = allFacts().length, goldN = order().filter(gold).length;
+    var rk = order().map(function (t) { return rocketFor(t, 22); }).join("");
+    return '<div class="row between"><div class="row"><button class="iconbtn" id="backMap" aria-label="Back to the galaxy map">' + ICON_BACK + '</button><div class="display" style="font-size:28px">Certificate</div></div>' + gpButton() + '</div>' +
+      '<div class="cert pop"><div class="eyebrow" style="color:#B36B00">Times Galaxy</div><div class="big">Certificate of Exploration</div>' +
+      '<div style="font-weight:800;color:#3D4680">This certifies that</div><div class="big" style="color:#2A3BB0">' + nm() + '</div>' +
+      '<div style="font-weight:800;color:#3D4680;max-width:30ch">explored all ' + order().length + ' planets of the Times Galaxy and knows the times tables up to ' + S.max + ' × ' + S.max + '.</div>' +
+      '<div class="rk">' + rk + '</div>' +
+      '<div class="stats" style="width:100%;margin-top:6px"><div class="stat" style="background:#fff;border-color:#E8D8B8;color:#0B1033"><b>' + countMastered() + '/' + total + '</b><span style="color:#3D4680">facts mastered</span></div><div class="stat" style="background:#fff;border-color:#E8D8B8;color:#0B1033"><b>' + goldN + '</b><span style="color:#3D4680">gold planets</span></div><div class="stat" style="background:#fff;border-color:#E8D8B8;color:#0B1033"><b>' + (S.galaxyDone || S.day) + '</b><span style="color:#3D4680">days of flying</span></div></div>' +
+      '<div class="line"></div><div style="display:flex;align-items:center;gap:8px;font-weight:800;color:#3D4680">' + zib(40, "cheer") + 'Zib, co-pilot · Rank: ' + esc(rank()) + '</div></div>' +
+      '<p class="center muted" style="margin:0;font-weight:700">Grown-ups: take a screenshot to keep this certificate.</p>' +
+      '<div class="grow"></div><button class="btn" id="toMap">Back to the galaxy</button>';
+  }
+
+  // ----- hangar -----
+  function vHangar() {
+    var o = order();
+    var grid = o.map(function (t) { var e = pstat(t) === "explored"; return '<div>' + (e ? rocketFor(t, 34) : '<span style="font-size:28px">?</span>') + '×' + t + (e && gold(t) ? " ★" : "") + '</div>'; }).join("");
+    var sw = PAINTS.map(function (p) {
+      var own = S.owned.indexOf(p[0]) >= 0, sel = S.ship === p[0];
+      return '<button class="swatch' + (sel ? " sel" : "") + '" data-paint="' + p[0] + '">' + rocket(p[0], 30) + '<span>' + p[1] + '</span><span class="muted">' + (sel ? "Flying" : own ? "Use" : ICON_GEM + " " + p[2]) + '</span></button>';
+    }).join("");
+    return '<div class="row between"><div class="row"><button class="iconbtn" id="backMap" aria-label="Back to the galaxy map">' + ICON_BACK + '</button><div class="display" style="font-size:32px">Hangar</div></div><span class="pill">' + ICON_GEM + S.crystals + '</span></div>' +
+      '<div class="card col"><b>My rockets · ' + exploredCount() + ' of ' + o.length + '</b><div class="hangar">' + grid + '</div></div>' +
+      (T && T.paintMsg ? '<div class="card" style="border-color:var(--amber);font-weight:800">' + T.paintMsg + '</div>' : "") +
+      '<div class="card col"><b>Dress up Zib</b><div class="swatches">' + HATS.slice(1).map(function (hh) {
+        var own = S.hats.indexOf(hh[0]) >= 0, sel = S.hat === hh[0];
+        return '<button class="swatch' + (sel ? " sel" : "") + '" data-hat="' + hh[0] + '">' + zib(54, "happy", hh[0]) + '<span>' + hh[1] + '</span><span class="muted">' + (sel ? "Wearing · tap to take off" : own ? "Put on" : ICON_GEM + " " + hh[2]) + '</span></button>'; }).join("") + '</div></div>' +
+      '<div class="card col"><b>Paint my ship</b><div class="swatches">' + sw + '</div></div>';
+  }
+
+  // ----- grown-ups -----
+  function vGrownups() {
+    var all = allFacts(), total = all.length;
+    var tiles = '<div class="tiles"><div class="tile"><b>' + countLearned() + '/' + total + '</b><span>facts learned</span></div><div class="tile"><b>' + countMastered() + '/' + total + '</b><span>mastered' + (S.relaxed ? " (relaxed mode)" : "") + '</span></div><div class="tile"><b>' + dueFacts().length + '</b><span>reviews due today</span></div></div>';
+    var head = "<tr><th>×</th>"; for (var c = 1; c <= S.max; c++) head += "<th>" + c + "</th>"; head += "</tr>";
+    var rows = "";
+    for (var r = 1; r <= S.max; r++) { rows += "<tr><th>" + r + "</th>";
+      for (var c2 = 1; c2 <= S.max; c2++) { var k = key(r, c2), f = F(k), cls = mastered(k) ? "m" : learned(k) ? "l" : (f.correct + f.wrong > 0 ? "s" : "n");
+        rows += '<td class="' + cls + '" title="' + r + " × " + c2 + ": right " + f.correct + " of " + (f.correct + f.wrong) + (f.tn ? ", avg " + (f.tsum / f.tn).toFixed(1) + " s" : "") + ", days " + f.days.length + "/3" + (f.due !== null ? ", next review day " + f.due : "") + '"></td>'; }
+      rows += "</tr>"; }
+    var hard = all.filter(function (k) { return F(k).wrong > 0; }).sort(function (a, b) { return (F(b).wrong / (F(b).correct + F(b).wrong)) - (F(a).wrong / (F(a).correct + F(a).wrong)) || F(b).wrong - F(a).wrong; }).slice(0, 8);
+    var hardHtml = hard.length ? '<ul style="margin:0;padding-left:18px">' + hard.map(function (k) { var f = F(k), p = parts(k); return "<li><b>" + p[0] + " × " + p[1] + "</b>: right " + f.correct + " of " + (f.correct + f.wrong) + (f.tn ? ", average " + (f.tsum / f.tn).toFixed(1) + " s" : "") + "</li>"; }).join("") + "</ul>" : '<p class="note" style="margin:0">No mistakes yet.</p>';
+    var logRows = S.log.slice(-200).reverse().map(function (e) { return "<tr><td>" + e.day + "</td><td>" + e.at + "</td><td>" + esc(e.mode) + "</td><td>" + e.q + "</td><td>" + esc(e.given) + "</td><td class=\"" + (e.ok ? "ok" : "bad") + "\">" + (e.ok ? "right" : "wrong (" + e.right + ")") + "</td><td>" + e.s + " s</td></tr>"; }).join("");
+    var today = S.log.filter(function (e) { return e.day === S.day; }), rightN = today.filter(function (e) { return e.ok; }).length;
+    var mins = (today.reduce(function (a, e) { return a + e.s; }, 0) / 60).toFixed(1);
+    return '<div class="gp"><div class="row between"><h2>Grown-ups</h2><button class="gbtn" id="gpClose">Back to the game</button></div>' + betaNote() + installHint() +
+      '<p class="note" style="margin:0">Progress for ' + (S.name ? esc(S.name) : "the child") + '. Day ' + S.day + ' · today ' + today.length + ' answers, ' + rightN + ' right, about ' + mins + ' min answering · streak ' + streak() + ' · speed goal now ' + (S.relaxed ? "off" : goal() + " s") + ' · new facts per mission now ' + (S.newCap || NEW_MIN) + '.</p>' + tiles + parentRating() +
+      '<div class="box"><h3>All facts</h3><div class="fgwrap"><table class="fg">' + head + rows + '</table></div>' +
+      '<div class="legend"><span><i style="background:#E59A12"></i>Mastered (easy facts: 1 day, others: 3 days)</span><span><i style="background:#3DA9E0"></i>Learned</span><span><i style="background:#F2B8C0"></i>Tried, not learned</span><span><i style="background:#E2E6FA"></i>Not seen</span></div></div>' +
+      '<div class="box"><h3>Facts that were hard</h3>' + hardHtml + '</div>' + saveCodeBox() +
+      (TEST ? '<div class="box"><h3>Test tools</h3><p class="note" style="margin:0">One mission per day (plus one bonus). Use “Next day” to simulate tomorrow: due reviews and the next mission appear.</p>' +
+      '<div class="row wrap"><button class="gbtn" id="nextDay">Next day (now day ' + S.day + ')</button><button class="gbtn light" id="redoFlight">Run the first flight again</button></div></div>' : "") +
+      '<div class="box"><h3>Start over</h3>' +
+      (gpConfirm ? '<div class="row wrap"><b>Delete all progress for this child?</b><button class="gbtn danger" id="resetYes">Yes, reset</button><button class="gbtn light" id="resetNo">Cancel</button></div>' : '<button class="gbtn light" id="resetAsk" style="align-self:flex-start">Reset this child</button>') + '</div>' +
+      settingsForm(false) +
+      '<div class="box"><div class="row between wrap"><h3>Answer log (newest first)</h3><button class="gbtn" id="copyLog">Copy log as CSV</button></div>' + (gpCopy ? '<p class="note" style="margin:0">' + esc(gpCopy) + '</p>' : "") +
+      '<textarea class="copy" id="csvBox" readonly hidden aria-label="Log as CSV"></textarea>' +
+      '<div class="logwrap"><table class="log"><tr><th>Day</th><th>Time</th><th>Where</th><th>Question</th><th>Typed</th><th>Result</th><th>Time</th></tr>' + (logRows || '<tr><td colspan="7">No answers yet.</td></tr>') + '</table></div></div></div>';
+  }
+  function csv() { var l = ["day,time,where,question,typed,correct_answer,result,seconds"]; S.log.forEach(function (e) { l.push([e.day, e.at, e.mode, '"' + e.q + '"', e.given, e.right, e.ok ? "right" : "wrong", e.s].join(",")); }); return l.join("\n"); }
+
+  // ---------- events ----------
+  function readSettings() {
+    var g = function (id) { return document.getElementById(id); };
+    if (!g("f-name")) return;
+    S.name = g("f-name").value.trim().slice(0, 20); S.speed = +g("f-speed").value; S.max = +g("f-max").value;
+    S.relaxed = g("f-relaxed").checked; S.voice = g("f-voice").checked; S.sound = g("f-sound").checked; S.readQ = g("f-readq").checked;
+    S.len = Math.max(5, Math.min(40, +g("f-len").value || 20));
+    if (S.flightDone) order().forEach(function (t) { if (!S.planets[t]) S.planets[t] = "locked"; });
+    save();
+  }
+  function openGrownups() { if (view === "play" || view === "flight") return; returnView = view; gpConfirm = false; gpCopy = ""; gpCode = ""; gpLoad = null; gpStars = 0; gpChip = ""; view = "grownups"; render(); window.scrollTo(0, 0); }
+  function go(v) { confettiRun++; view = v; render(); window.scrollTo(0, 0); }
+
+  document.addEventListener("change", function (e) { if (e.target.id && e.target.id.indexOf("f-") === 0) { readSettings(); if (view === "grownups") render(); } });
+  document.addEventListener("click", function (e) {
+    var bub = e.target.closest(".bubble[data-say]"); if (bub) { say(bub.getAttribute("data-say")); return; }
+    var b = e.target.closest("button"); if (!b || b.disabled) return;
+    audio();
+    if (b.dataset.hat) {
+      var hid = b.dataset.hat, hp = HATS.filter(function (x) { return x[0] === hid; })[0];
+      T = T || {}; T.paintMsg = "";
+      if (S.hat === hid) S.hat = "none";
+      else if (S.hats.indexOf(hid) >= 0) S.hat = hid;
+      else if (S.crystals >= hp[2]) { S.crystals -= hp[2]; S.hats.push(hid); S.hat = hid; sfx("win"); confetti(); }
+      else T.paintMsg = "You need " + (hp[2] - S.crystals) + " more crystals. Keep flying!";
+      save(); render(); return;
+    }
+    if (b.dataset.k) return onKey(b.dataset.k);
+    if (b.dataset.rate) {
+      if (!T || !T.askRating || (S.childRated && S.childRated[S.day])) return;
+      var rv = +b.dataset.rate; S.childRated = S.childRated || {}; S.childRated[S.day] = rv; save(); sfx("ok");
+      signal("rating_child", { value: rv, day: S.day }); render(); return;
+    }
+    if (b.dataset.stars) { gpStars = +b.dataset.stars; render(); return; }
+    if (b.dataset.chip) { gpChip = gpChip === b.dataset.chip ? "" : b.dataset.chip; render(); return; }
+    if (b.dataset.planet) { openPlanet = +b.dataset.planet; go("planet"); return; }
+    if (b.dataset.paint) {
+      var c = b.dataset.paint, p = PAINTS.filter(function (x) { return x[0] === c; })[0];
+      T = T || {}; T.paintMsg = "";
+      if (S.owned.indexOf(c) >= 0) S.ship = c;
+      else if (S.crystals >= p[2]) { S.crystals -= p[2]; S.owned.push(c); S.ship = c; sfx("win"); confetti(); }
+      else { T.paintMsg = "You need " + (p[2] - S.crystals) + " more crystals. Keep flying!"; }
+      save(); render(); return;
+    }
+    switch (b.id) {
+      case "startSetup": readSettings(); go("intro"); break;
+      case "takeoff": startFlight(); break;
+      case "dunno": if (!busy && T && T.type === "flight") flightAnswer(null); break;
+      case "toMap": T = null; go("map"); break;
+      case "backMap": T = null; go("map"); break;
+      case "toCert": T = null; go("certificate"); setTimeout(confetti, 200); break;
+      case "toHangar": case "toHangar2": T = null; go("hangar"); break;
+      case "goLaunch": startMission("main"); break;
+      case "goBonus": startMission("bonus"); break;
+      case "goChallenge": startChallenge(current()); break;
+      case "startChallenge": startChallenge(openPlanet); break;
+      case "gotit": gotIt(); break;
+      case "quit": if (T && (T.type === "mission" || T.type === "challenge")) { T.paused = true; render(); } else { T = null; typed = ""; go(S.flightDone ? "map" : "intro"); } break;
+      case "resume": T.paused = false; render(); T.start = performance.now(); break;
+      case "stopMission": T = null; typed = ""; go("map"); break;
+      case "meetGo":
+        var mq = curQ(); F(mq.k).met = true; T.meet = null; mq.practice = true; T.introduced.push(mq.k);
+        render(); T.start = performance.now(); break;
+      case "gpClose": go(returnView === "grownups" || returnView === "setup" ? "map" : returnView); break;
+      case "nextDay": if (TEST) { S.dayOffset = (S.dayOffset || 0) + 1; render(); } break;
+      case "redoFlight": if (TEST) go("intro"); break;
+      case "resetAsk": gpConfirm = true; render(); break;
+      case "resetNo": gpConfirm = false; render(); break;
+      case "hintOk": S.hintDone = true; save(); render(); break;
+      case "sendRating":
+        if (!gpStars || S.parentRated) break;
+        S.parentRated = { value: gpStars, chip: gpChip || "none", day: S.day }; save();
+        signal("rating_parent", { value: gpStars, chip: gpChip || "none" }); render(); break;
+      case "copyCode":
+        var cbox = document.getElementById("saveCode"), cmsg = document.getElementById("codeMsg"); if (!gpCode) break;
+        var selectCode = function () { cbox.focus(); cbox.select(); cmsg.textContent = "Now copy the selected code."; };
+        try { navigator.clipboard.writeText(gpCode).then(function () { cmsg.textContent = "Copied. Keep it somewhere safe."; signal("save_export"); }, selectCode); } catch (err) { selectCode(); }
+        break;
+      case "loadAsk":
+        var lmsg = document.getElementById("loadMsg");
+        readCode(document.getElementById("loadCode").value).then(function (s) { gpLoad = s; render(); if (view === "setup") { var d = document.querySelector("details"); if (d) d.open = true; } },
+          function () { lmsg.textContent = "This code does not work. Check that you copied all of it."; });
+        break;
+      case "loadYes": S = upgrade(gpLoad); gpLoad = null; gpConfirm = false; save(); T = null; go(S.flightDone ? "map" : "intro"); break;
+      case "loadNo": gpLoad = null; render(); if (view === "setup") { var d2 = document.querySelector("details"); if (d2) d2.open = true; } break;
+      case "resetYes": var keep = { uid: S.uid, speed: S.speed, relaxed: S.relaxed, max: S.max, voice: S.voice, sound: S.sound, len: S.len }; S = freshState(); Object.assign(S, keep); save(); gpConfirm = false; T = null; go("setup"); break;
+      case "copyLog":
+        var text = csv(), box = document.getElementById("csvBox");
+        var fallback = function () { box.hidden = false; box.value = text; box.focus(); box.select(); };
+        try { navigator.clipboard.writeText(text).then(function () { gpCopy = "Copied " + S.log.length + " rows. Paste them into a spreadsheet."; render(); }, fallback); } catch (err) { fallback(); }
+        break;
+    }
+  });
+  function onKey(k) {
+    if (busy || !T || !(T.type === "flight" || T.type === "mission" || T.type === "challenge") || view === "missionEnd" || view === "challengeEnd") return;
+    if (T.paused || T.meet) return;
+    if (T.show) { if (k === "go") gotIt(); return; }
+    if (k === "del") typed = typed.slice(0, -1);
+    else if (k === "go") { if (!typed) return; return T.type === "flight" ? flightAnswer(typed) : playAnswer(typed); }
+    else if (typed.length < 3) typed += k;
+    var box = document.querySelector(".answer"); if (box) { box.textContent = typed || "?"; box.className = "answer" + (typed ? "" : " empty"); }
+  }
+  document.addEventListener("keydown", function (e) {
+    if (!T || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+    if (/^[0-9]$/.test(e.key)) { onKey(e.key); e.preventDefault(); } else if (e.key === "Backspace") { onKey("del"); e.preventDefault(); } else if (e.key === "Enter") { onKey("go"); e.preventDefault(); }
+  });
+  function bindHold() {
+    var b = document.getElementById("gpbtn"); if (!b) return; var timer = null;
+    var start = function (e) { e.preventDefault(); b.classList.add("holding"); timer = setTimeout(function () { timer = null; openGrownups(); }, 1500); };
+    var stop = function () { b.classList.remove("holding"); if (timer) { clearTimeout(timer); timer = null; } };
+    b.addEventListener("pointerdown", start); b.addEventListener("pointerup", stop); b.addEventListener("pointerleave", stop); b.addEventListener("pointercancel", stop);
+    // keyboard (Chromebook): hold Enter or Space for 1.5 s too, so a child cannot open the area with one key press
+    b.addEventListener("keydown", function (e) { if (e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); if (!e.repeat && !timer) start(e); });
+    b.addEventListener("keyup", function (e) { if (e.key === "Enter" || e.key === " ") stop(); });
+    b.addEventListener("blur", stop);
+  }
+
+  // ---------- analytics (TelemetryDeck) ----------
+  // Whitelist only: docs/analytics.md. Signals carry fixed ids and counts, never the child's name or anything typed.
+  // clientUser is a random id made on this device (S.uid); TelemetryDeck hashes it again before it is stored.
+  // Signals wait in the save (S.tdq) until they are sent, so play without internet still counts, with its own time.
+  // Test mode everywhere except the real domain (and there too with ?test=1).
+  var TD_APP = "D6E0ACED-6790-45A9-9B08-2F987355A201";
+  var TD_TEST = location.hostname !== "timesgalaxy.app" || TEST;
+  var td = null, tdBusy = false;
+  function uid() {
+    // no save() here: a new visitor's empty state must not be stored before setup (the next save keeps the id)
+    if (!S.uid) { try { S.uid = crypto.randomUUID(); } catch (e) { S.uid = "u" + Date.now().toString(36) + Math.random().toString(36).slice(2); } }
+    return S.uid;
+  }
+  function platform() { var ua = navigator.userAgent; return /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "ipad" : /iPhone|iPod/.test(ua) ? "iphone" : /Android/.test(ua) ? "android" : "desktop"; }
+  function signal(name, params) {
+    if (!S) return;
+    var p = {}, k; params = params || {};
+    for (k in params) p[k] = String(params[k]);
+    p.premium = "false"; p.beta = "true"; p.platform = platform(); p.installed = isInstalled() ? "true" : "false";
+    uid(); S.tdq = S.tdq || [];
+    if (S.tdq.length < 100) S.tdq.push({ t: name, p: p, at: new Date().toISOString() });
+    save();
+    if (TD_TEST) console.log("Analytics sent:", name, p);
+    sendSignals();
+  }
+  function once(flag, name, params) { S.sent = S.sent || {}; if (S.sent[flag]) return; S.sent[flag] = 1; signal(name, params); }
+  function sendSignals() {
+    if (!td || tdBusy || !S || !S.tdq || !S.tdq.length || navigator.onLine === false) return;
+    var q = S.tdq, batch = q.slice(0, 20); tdBusy = true; td.clientUser = uid();
+    Promise.all(batch.map(function (b) { return td._build(b.t, b.p, undefined, b.at); })) // _build keeps the queued time (SDK 2.0.4)
+      .then(function (bodies) { return td._post(bodies); })
+      .then(function (r) {
+        tdBusy = false;
+        if (r.ok || (r.status >= 400 && r.status < 500)) { q.splice(0, batch.length); save(); if (r.ok) sendSignals(); } // a 4xx would never succeed: drop it
+      }, function () { tdBusy = false; });
+  }
+  try {
+    import("../vendor/telemetrydeck/telemetrydeck.js").then(function (m) {
+      td = new m.default({ appID: TD_APP, clientUser: uid(), testMode: TD_TEST }); sendSignals();
+    }, function () {});
+  } catch (e) {}
+  window.addEventListener("online", sendSignals);
+
+  // Signals at the end of an activity: the original functions run unchanged, the signal goes out after them.
+  var MILESTONES = [1, 5, 10, 25, 50, 100];
+  var origFinishFlight = finishFlight, origEndMission = endMission, origEndChallenge = endChallenge, origOpenGrownups = openGrownups, origInstallHint = installHint;
+  finishFlight = function () { var asked = T ? T.i : 0; origFinishFlight(); signal("FF_done", { planetsKnown: S.parade.length, questions: asked }); };
+  endMission = function () {
+    if (S.missionsDone === undefined) S.missionsDone = Object.keys(S.mainDone || {}).length;
+    origEndMission();
+    if (T.kind === "bonus") { signal("bonus_done", { planet: T.planet || "patrol" }); return; }
+    S.rateAsked = S.rateAsked || {};
+    if ([2, 7, 14].indexOf(S.day) >= 0 && !S.rateAsked[S.day]) { S.rateAsked[S.day] = 1; T.askRating = true; save(); render(); } // child rating, never twice a day
+    var n = ++S.missionsDone; save();
+    if (MILESTONES.indexOf(n) >= 0) once("mission_done_" + n, "mission_done_" + n, { planet: T.planet || "patrol", questions: T.answered, newFacts: T.introduced.length });
+  };
+  endChallenge = function () {
+    var t = T.planet; origEndChallenge();
+    S.chTries = S.chTries || {}; S.chTries[t] = (S.chTries[t] || 0) + 1; save();
+    if (T.passed) signal("challenge_passed", { planet: t, tries: S.chTries[t] }); else signal("challenge_almost", { planet: t, missing: T.missing.length });
+    if (T.galaxy) signal("galaxy_done", { days: S.galaxyDone });
+  };
+  openGrownups = function () { var before = view; origOpenGrownups(); if (view === "grownups" && before !== "grownups") signal("grownups_open"); };
+  installHint = function () { var h = origInstallHint(); if (h) once("install_hint_shown", "install_hint_shown"); return h; };
+  // day_return: the first activity on calendar day 2 or 3, and on the first day >= 7, >= 14, >= 30 (decision by JG, 17 October 2026)
+  function dayReturn() {
+    var d = S.day;
+    [2, 3].forEach(function (v) { if (d === v) once("day_return_" + v, "day_return", { day: v, streak: streak() }); });
+    [7, 14, 30].forEach(function (v) { if (d >= v) once("day_return_" + v, "day_return", { day: v, streak: streak() }); });
+  }
+  var PAINT_IDS = { "#FF4FD8": "paint_pink", "#B8FF3D": "paint_lime", "#FFB547": "paint_gold", "#3DE0FF": "paint_blue", "#FF6B6B": "paint_red" };
+  var before = null;
+  document.addEventListener("click", function (e) { // runs before the game's own click handler
+    var b = e.target.closest("button"); if (!b || b.disabled || !S) return;
+    before = { id: b.id, hats: S.hats.length, owned: S.owned.length, at: T && T.i };
+    if (/^(goLaunch|goBonus|goChallenge|startChallenge)$/.test(b.id)) dayReturn();
+  }, true);
+  document.addEventListener("click", function (e) { // runs after it
+    var b = e.target.closest("button"), was = before; before = null; if (!b || !was || !S) return;
+    if (was.id === "takeoff") signal("FF_start");
+    else if (was.id === "stopMission") signal("pause_stop", { at: was.at || 0 });
+    else if (was.id === "loadYes") signal("save_import");
+    else if (b.dataset.hat && S.hats.length > was.hats) { var h = HATS.filter(function (x) { return x[0] === b.dataset.hat; })[0]; signal("hangar_buy", { item: "hat_" + h[0], price: h[2] }); }
+    else if (b.dataset.paint && S.owned.length > was.owned) { var pt = PAINTS.filter(function (x) { return x[0] === b.dataset.paint; })[0]; signal("hangar_buy", { item: PAINT_IDS[pt[0]], price: pt[2] }); }
+  });
+
+  // a tab left open overnight: show the new day when the child comes back
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") sendSignals(); if (document.visibilityState === "visible" && S && !ACTIVE[view] && view !== "grownups" && syncDay()) render(); });
+
+  // ---------- boot ----------
+  S = load();
+  if (!S) { S = freshState(); view = "setup"; } else { upgrade(S); view = S.flightDone ? "map" : "intro"; }
+  render();
+  loadMirror(); askPersist();
+  // offline play after the first visit; the worker sits at the site root (../sw.js), so it covers /play/ at any address
+  try { if ("serviceWorker" in navigator && window.isSecureContext) navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(function () {}); } catch (e) {}
+})();
+</script>
+
+</body>
+</html>
