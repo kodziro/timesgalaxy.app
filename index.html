@@ -109,6 +109,10 @@ section { padding: 34px 0 6px; }
 .ticks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; color: var(--soft); }
 .ticks li { padding-left: 30px; position: relative; }
 .ticks li::before { content: ""; position: absolute; left: 4px; top: 8px; width: 14px; height: 8px; border-left: 3px solid var(--lime); border-bottom: 3px solid var(--lime); transform: rotate(-45deg); }
+.guides { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.guides a { display: block; background: var(--panel); border: 2px solid var(--line); border-radius: 18px; padding: 14px 18px; color: var(--cyan); text-decoration: none; font-weight: 900; }
+.guides small { display: block; color: var(--muted); font-weight: 600; font-size: 16px; }
+@media (min-width: 720px) { .guides { grid-template-columns: 1fr 1fr; } }
 details { background: var(--panel); border: 2px solid var(--line); border-radius: 18px; padding: 14px 18px; }
 details + details { margin-top: 10px; }
 summary { cursor: pointer; font-weight: 900; font-size: 19px; }
@@ -189,10 +193,20 @@ footer a { color: inherit; }
             <li>Every fact up to 12 × 12, both ways round (7 × 8 and 8 × 7), so it fits the Year 4 multiplication tables check in England.</li>
             <li>Facts are reviewed on later days, so practice turns into quick recall.</li>
           </ul>
+          <p style="margin:12px 0 0"><a href="./for-teachers/">The guide for teachers →</a></p>
         </div>
       </div>
     </section>
 
+    <section aria-labelledby="guides">
+      <h2 id="guides">Guides</h2>
+      <ul class="guides">
+        <li><a href="./times-tables-tricks/">Times tables tricks<small>One easy trick for every table from 1 to 12.</small></a></li>
+        <li><a href="./how-to-learn-times-tables-5-minutes-a-day/">Learn the times tables in 5 minutes a day<small>A simple daily plan for all multiplication facts.</small></a></li>
+        <li><a href="./year-4-multiplication-tables-check/">Year 4 multiplication tables check<small>What the MTC is and how to get ready.</small></a></li>
+        <li><a href="./for-teachers/">For teachers<small>Free practice at home: one link, no logins.</small></a></li>
+      </ul>
+    </section>
     <section aria-labelledby="faq">
       <h2 id="faq">Questions</h2>
       <details><summary>Is Times Galaxy free?</summary><p>Yes. It is free to play, with no ads and no account.</p></details>
@@ -209,7 +223,7 @@ footer a { color: inherit; }
 
   <footer>
     <p>Times Galaxy · Free to play · No account · No ads · Progress stays on your device</p>
-    <p><a href="./parents/">For parents</a> · <a href="./privacy/">Privacy</a> · <a href="mailto:appsforparents@gmail.com">appsforparents@gmail.com</a> · Apps for Parents</p>
+    <p><a href="./parents/">For parents</a> · <a href="./for-teachers/">For teachers</a> · <a href="./privacy/">Privacy</a> · <a href="mailto:appsforparents@gmail.com">appsforparents@gmail.com</a> · Apps for Parents</p>
   </footer>
 </div>
 <script>
