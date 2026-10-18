@@ -1409,12 +1409,20 @@ textarea.copy { width: 100%; height: 120px; font-family: ui-monospace, monospace
     [2, 3].forEach(function (v) { if (d === v) once("day_return_" + v, "day_return", { day: v, streak: streak() }); });
     [7, 14, 30].forEach(function (v) { if (d >= v) once("day_return_" + v, "day_return", { day: v, streak: streak() }); });
   }
+  // day_active: the first activity of each calendar day (decision by JG, 18 October 2026). day = days since the
+  // first launch (0 = first day, so S.day - 1), missions = main missions done before it. One per day: S.sent.dayActive holds the last day sent.
+  function dayActive() {
+    var d = S.day - 1; S.sent = S.sent || {}; if (S.sent.dayActive === d) return;
+    S.sent.dayActive = d;
+    signal("day_active", { day: d, missions: S.missionsDone === undefined ? Object.keys(S.mainDone || {}).length : S.missionsDone });
+  }
   var PAINT_IDS = { "#FF4FD8": "paint_pink", "#B8FF3D": "paint_lime", "#FFB547": "paint_gold", "#3DE0FF": "paint_blue", "#FF6B6B": "paint_red" };
   var before = null;
   document.addEventListener("click", function (e) { // runs before the game's own click handler
     var b = e.target.closest("button"); if (!b || b.disabled || !S) return;
     before = { id: b.id, hats: S.hats.length, owned: S.owned.length, at: T && T.i };
     if (/^(goLaunch|goBonus|goChallenge|startChallenge)$/.test(b.id)) dayReturn();
+    if (/^(takeoff|goLaunch|goBonus|goChallenge|startChallenge)$/.test(b.id)) dayActive(); // takeoff: the first flight is day 0's activity
   }, true);
   document.addEventListener("click", function (e) { // runs after it
     var b = e.target.closest("button"), was = before; before = null; if (!b || !was || !S) return;
